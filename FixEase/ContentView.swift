@@ -9,16 +9,30 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            Background()
+            
         }
-        .padding()
+    }
+}
+
+extension ContentView {
+    struct Background: View {
+        var body: some View {
+            VStack {
+                Ellipse()
+                    .frame(width: 550, height: 350)
+                    .foregroundStyle(Gradient(colors: [Color.greenLight, Color.greenDark]))
+                    .rotationEffect(.degrees(-7))
+                    .ignoresSafeArea()
+                    .offset(y: -130)
+                Spacer()
+            }
+        }
     }
 }
 
 #Preview {
     ContentView()
 }
+
