@@ -12,6 +12,11 @@ struct UpkeepRowView: View {
     let upkeep: (description: String, dueDate: Date, emoji: String)
     @State var isCompleted = false
     
+    init(_ upkeep: (description: String, dueDate: Date, emoji: String), isCompleted: Bool = false) {
+        self.upkeep = upkeep
+        self.isCompleted = isCompleted
+    }
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
@@ -67,6 +72,6 @@ struct UpkeepRowView: View {
 
 #Preview {
     let upkeep: (description: String, dueDate: Date, emoji: String) = (description: "Water Flowers", dueDate: Date(), emoji: "🌻")
-    return UpkeepRowView(upkeep: upkeep)
+    return UpkeepRowView(upkeep)
         .padding()
 }

@@ -18,11 +18,29 @@ struct MainView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundStyle(.white)
-            .padding()
+            .padding([.top, .horizontal])
             
             //MARK: -- Items List View...
-            Rectangle()
-                .frame(height: 85)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 24) {
+                    ForEach(1..<10) { item in
+                        NavigationLink {
+                            Text("🌻")
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .frame(width: 78)
+                                    .foregroundStyle(Color.white)
+                                    .shadow(radius: 10)
+                                Text("🌻")
+                                    .font(.custom("Item Button", fixedSize: 45))
+                            }
+                        }
+
+                    }
+                }
+                .padding()
+            }
             
             HStack {
                 Text("Upkeeps")
@@ -40,10 +58,10 @@ struct MainView: View {
             ScrollView {
                 VStack(spacing: 35) {
                     ForEach(1..<6) { upkeep in
-                        UpkeepRowView(upkeep: (description: "Water Flowers", dueDate: Date(), emoji: "🌻"))
+                        UpkeepRowView((description: "Water Flowers", dueDate: Date(), emoji: "🌻"))
                     }
                 }
-                .padding(.horizontal)
+                .padding()
             }
             
         }
