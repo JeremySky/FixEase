@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        ZStack {
-            Background()
-            
+        NavigationStack {
+            ZStack {
+                Background()
+                MainView()
+            }
         }
     }
 }
@@ -19,14 +21,16 @@ struct ContentView: View {
 extension ContentView {
     struct Background: View {
         var body: some View {
-            VStack {
-                Ellipse()
-                    .frame(width: 550, height: 350)
-                    .foregroundStyle(Gradient(colors: [Color.greenLight, Color.greenDark]))
-                    .rotationEffect(.degrees(-7))
-                    .ignoresSafeArea()
-                    .offset(y: -130)
-                Spacer()
+            GeometryReader { geometry in
+                VStack {
+                    Ellipse()
+                        .frame(width: 550, height: 350)
+                        .foregroundStyle(Gradient(colors: [Color.greenLight, Color.greenDark]))
+                        .rotationEffect(.degrees(-7))
+                    Spacer()
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .offset(y: -geometry.size.height/4.5)
             }
         }
     }
