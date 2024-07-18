@@ -40,8 +40,7 @@ struct MainView: View {
             ScrollView {
                 VStack(spacing: 35) {
                     ForEach(1..<6) { upkeep in
-                        RoundedRectangle(cornerRadius: 10)
-                            .frame(width: .infinity, height: 115)
+                        UpkeepRowView(upkeep: (description: "Water Flowers", dueDate: Date(), emoji: "🌻"))
                     }
                 }
                 .padding(.horizontal)
