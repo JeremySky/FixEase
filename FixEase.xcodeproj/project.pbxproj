@@ -13,6 +13,7 @@
 		62802D432C46E4F200234DE4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 62802D422C46E4F200234DE4 /* Preview Assets.xcassets */; };
 		62802D4A2C488DAD00234DE4 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62802D492C488DAD00234DE4 /* MainView.swift */; };
 		62813A202C49C35C001C9EF2 /* UpkeepRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A1F2C49C35C001C9EF2 /* UpkeepRowView.swift */; };
+		62813A242C49DA22001C9EF2 /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A232C49DA22001C9EF2 /* ItemDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		62802D422C46E4F200234DE4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		62802D492C488DAD00234DE4 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		62813A1F2C49C35C001C9EF2 /* UpkeepRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpkeepRowView.swift; sourceTree = "<group>"; };
+		62813A232C49DA22001C9EF2 /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 				62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */,
 				62802D3D2C46E4ED00234DE4 /* ContentView.swift */,
 				62802D492C488DAD00234DE4 /* MainView.swift */,
+				62813A232C49DA22001C9EF2 /* ItemDetailView.swift */,
 				62813A1F2C49C35C001C9EF2 /* UpkeepRowView.swift */,
 				62802D3F2C46E4F200234DE4 /* Assets.xcassets */,
 				62802D412C46E4F200234DE4 /* Preview Content */,
@@ -143,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62813A242C49DA22001C9EF2 /* ItemDetailView.swift in Sources */,
 				62802D3E2C46E4ED00234DE4 /* ContentView.swift in Sources */,
 				62802D4A2C488DAD00234DE4 /* MainView.swift in Sources */,
 				62802D3C2C46E4ED00234DE4 /* FixEaseApp.swift in Sources */,

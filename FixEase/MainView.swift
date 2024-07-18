@@ -9,7 +9,10 @@ import SwiftUI
 
 struct MainView: View {
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 15) {
+            
+            
+            //MARK: -- Welcome message...
             VStack(alignment: .leading) {
                 Text("Hello, John")
                     .font(.title)
@@ -18,11 +21,14 @@ struct MainView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundStyle(.white)
-            .padding([.top, .horizontal])
+            .padding(.top, 8)
+            .padding(.horizontal)
+            
+            
             
             //MARK: -- Items List View...
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 24) {
+                HStack(spacing: 17) {
                     ForEach(1..<10) { item in
                         NavigationLink {
                             Text("🌻")
@@ -36,12 +42,15 @@ struct MainView: View {
                                     .font(.custom("Item Button", fixedSize: 45))
                             }
                         }
-
+                        
                     }
                 }
                 .padding()
             }
             
+            
+            
+            //MARK: -- Upkeeps List...
             HStack {
                 Text("Upkeeps")
                     .font(.largeTitle)
@@ -54,15 +63,17 @@ struct MainView: View {
             }
             .padding(.horizontal)
             
-            //MARK: -- Upkeeps List...
+            //list...
             ScrollView {
-                VStack(spacing: 35) {
+                VStack(spacing: 30) {
                     ForEach(1..<6) { upkeep in
                         UpkeepRowView((description: "Water Flowers", dueDate: Date(), emoji: "🌻"))
                     }
                 }
                 .padding()
             }
+            
+            
             
         }
         .toolbar {

@@ -27,7 +27,7 @@ struct UpkeepRowView: View {
                 Spacer()
                 Text(upkeep.emoji)
                     .font(.custom("background image", fixedSize: 100))
-                    .opacity(0.4)
+                    .opacity(isCompleted ? 0.25 : 0.6)
                 Spacer().frame(width: 60)
             }
             
