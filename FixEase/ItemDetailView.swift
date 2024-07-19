@@ -8,23 +8,31 @@
 import SwiftUI
 
 struct ItemDetailView: View {
+    
+    @State var item: Item
+    
+    init(_ item: Item) {
+        self.item = item
+    }
+    
     var body: some View {
         VStack {
             
-            //MARK: -- Item Details
+            //MARK: -- Item Details...
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle(LinearGradient(colors: [.white, .clear], startPoint: .center, endPoint: .trailing))
                 HStack {
-                    VStack(alignment: .leading) {
-                        Text("Rocket Ship")
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(item.name)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundStyle(Color.greenDark)
-                        Text("Model LMNOP123 The American Dream")
+                        Text(item.description)
                             .font(.caption)
                             .foregroundStyle(.gray)
-                        Text("12 Upkeeps")
+                            .padding(.bottom, 5)
+                        Text("\(item.upkeeps.count) Upkeeps")
                             .font(.largeTitle)
                             .fontWeight(.black)
                             .fontWidth(.compressed)
@@ -32,7 +40,7 @@ struct ItemDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
                     
-                    Text("🚀")
+                    Text(item.emoji)
                         .font(.custom("Item Emoji", fixedSize: 80))
                         .padding(.trailing)
                 }
@@ -41,9 +49,13 @@ struct ItemDetailView: View {
             .frame(height: 120)
             .padding()
             
+            Spacer().frame(height: 70)
             
-            Spacer()
+            UpkeepsDetailView($item.upkeeps)
         }
+        
+        
+        
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
@@ -68,11 +80,90 @@ struct ItemDetailView: View {
     }
 }
 
+
+extension ItemDetailView {
+    struct UpkeepsDetailView: View {
+        
+        @Binding var upkeeps: [Upkeep]
+        @State var index: Int = 0
+        
+        init(_ upkeeps: Binding<[Upkeep]>, index: Int = 0) {
+            self._upkeeps = upkeeps
+            self.index = index
+        }
+        
+        var body: some View {
+            //WIP empty view
+            HStack {
+                Button(action: {
+                    if index > 0 {
+                        index -= 1
+                    }
+                },
+                       label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(Color.gray)
+                })
+                .disabled(index == 0)
+                //MARK: -- Upkeep Details...
+                VStack {
+                    Text(upkeeps[index].description)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color.greenDark)
+                    Text("Every 2 Years")
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.gray)
+                    Text("Saturday July 11, 2024")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                Button(action: {
+                    if index < upkeeps.count {
+                        index += 1
+                    }
+                },
+                       label: {
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(Color.gray)
+                })
+                .disabled(index == (upkeeps.count - 1))
+            }
+            .padding()
+            
+            
+            //MARK: -- Notes...
+            VStack(alignment: .leading) {
+                Text("Notes:")
+                    .bold()
+                    .padding(.horizontal)
+                List {
+                    ForEach(1..<4) { note in
+                        Text("This is a very important note.")
+                    }
+                    Button("+ New Note") {
+                        print("Click click click")
+                    }
+                    .foregroundStyle(Color.greenDark)
+                }
+                .listStyle(.inset)
+                .scrollIndicators(.hidden)
+            }
+            .padding()
+        }
+    }
+}
+
+
+
+
+
 #Preview {
     NavigationStack {
         ZStack {
             ContentView.Background()
-            ItemDetailView()
+            ItemDetailView(Item.exRocketShip)
         }
     }
 }

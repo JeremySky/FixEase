@@ -11,7 +11,7 @@ import SwiftUI
 struct FixEaseApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ItemDetailView(Item.exRocketShip)
         }
     }
 }
