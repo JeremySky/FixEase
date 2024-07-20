@@ -10,6 +10,8 @@ import SwiftUI
 struct MainView: View {
     
     @State var collection: [Item]
+    @State var numCompleted: Int = 0
+    
     var upkeeps: [Upkeep] {
         var list = [Upkeep]()
         for item in collection {
@@ -78,7 +80,7 @@ struct MainView: View {
                     .fontWeight(.heavy)
                     .foregroundStyle(Color.greenLight)
                 Spacer()
-                Text("1/3 Complete")
+                Text("\(numCompleted)/\(upkeeps.count) Complete")
                     .fontWeight(.bold)
                     .foregroundStyle(.gray)
             }
@@ -88,7 +90,9 @@ struct MainView: View {
             ScrollView {
                 VStack(spacing: 30) {
                     ForEach(upkeeps, id: \.self) { upkeep in
-                        UpkeepRowView(upkeep)
+                        UpkeepRowView(upkeep) {
+                            numCompleted += 1
+                        }
                     }
                 }
                 .padding()

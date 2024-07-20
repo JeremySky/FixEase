@@ -11,10 +11,12 @@ struct UpkeepRowView: View {
     
     let upkeep: Upkeep
     @State var isCompleted = false
+    let action: () -> Void
     
-    init(_ upkeep: Upkeep, isCompleted: Bool = false) {
+    init(_ upkeep: Upkeep, isCompleted: State<Bool> = .init(initialValue: false), action: @escaping () -> Void) {
         self.upkeep = upkeep
-        self.isCompleted = isCompleted
+        self._isCompleted = isCompleted
+        self.action = action
     }
     
     var body: some View {
@@ -52,6 +54,7 @@ struct UpkeepRowView: View {
                 Button(action: {
                     withAnimation {
                         isCompleted = true
+                        action()
                     }
                 },
                        label: {
@@ -71,6 +74,6 @@ struct UpkeepRowView: View {
 }
 
 #Preview {
-    UpkeepRowView(Upkeep.listRocketShip[0])
+    UpkeepRowView(Upkeep.listRocketShip[0]) {}
         .padding()
 }
