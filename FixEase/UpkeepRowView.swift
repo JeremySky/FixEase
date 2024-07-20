@@ -9,10 +9,10 @@ import SwiftUI
 
 struct UpkeepRowView: View {
     
-    let upkeep: (description: String, dueDate: Date, emoji: String)
+    let upkeep: Upkeep
     @State var isCompleted = false
     
-    init(_ upkeep: (description: String, dueDate: Date, emoji: String), isCompleted: Bool = false) {
+    init(_ upkeep: Upkeep, isCompleted: Bool = false) {
         self.upkeep = upkeep
         self.isCompleted = isCompleted
     }
@@ -25,7 +25,7 @@ struct UpkeepRowView: View {
             
             HStack {
                 Spacer()
-                Text(upkeep.emoji)
+                Text(upkeep.emoji ?? "❔")
                     .font(.custom("background image", fixedSize: 100))
                     .opacity(isCompleted ? 0.25 : 0.6)
                 Spacer().frame(width: 60)
@@ -71,7 +71,6 @@ struct UpkeepRowView: View {
 }
 
 #Preview {
-    let upkeep: (description: String, dueDate: Date, emoji: String) = (description: "Water Flowers", dueDate: Date(), emoji: "🌻")
-    return UpkeepRowView(upkeep)
+    UpkeepRowView(Upkeep.listRocketShip[0])
         .padding()
 }

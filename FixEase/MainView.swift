@@ -8,6 +8,27 @@
 import SwiftUI
 
 struct MainView: View {
+    
+    @State var collection: [Item]
+    var upkeeps: [Upkeep] {
+        var list = [Upkeep]()
+        for item in collection {
+            for upkeep in item.upkeeps {
+                var updatedUpkeep = upkeep
+                updatedUpkeep.emoji = item.emoji
+                list.append(updatedUpkeep)
+            }
+        }
+        list.sort { x, y in
+            x.dueDate < y.dueDate
+        }
+        return list
+    }
+    
+    init(_ collection: [Item]) {
+        self.collection = collection
+    }
+    
     var body: some View {
         VStack(spacing: 15) {
             
@@ -29,16 +50,16 @@ struct MainView: View {
             //MARK: -- Items List View...
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 17) {
-                    ForEach(1..<10) { item in
+                    ForEach(collection, id: \.self) { item in
                         NavigationLink {
-                            Text("🌻")
+                            Text(item.name)
                         } label: {
                             ZStack {
                                 Circle()
                                     .frame(width: 78)
                                     .foregroundStyle(Color.white)
                                     .shadow(radius: 10)
-                                Text("🌻")
+                                Text(item.emoji)
                                     .font(.custom("Item Button", fixedSize: 45))
                             }
                         }
@@ -66,8 +87,8 @@ struct MainView: View {
             //list...
             ScrollView {
                 VStack(spacing: 30) {
-                    ForEach(1..<6) { upkeep in
-                        UpkeepRowView((description: "Water Flowers", dueDate: Date(), emoji: "🌻"))
+                    ForEach(upkeeps, id: \.self) { upkeep in
+                        UpkeepRowView(upkeep)
                     }
                 }
                 .padding()
@@ -87,6 +108,6 @@ struct MainView: View {
 
 #Preview {
     NavigationStack {
-        MainView()
+        MainView(Item.list)
     }
 }

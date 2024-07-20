@@ -87,6 +87,9 @@ extension ItemDetailView {
         @Binding var upkeeps: [Upkeep]
         @State var index: Int = 0
         
+        var leftButtonIsDisabled: Bool { index == 0 }
+        var rightButtonIsDisabled: Bool { index == upkeeps.count - 1 }
+        
         init(_ upkeeps: Binding<[Upkeep]>, index: Int = 0) {
             self._upkeeps = upkeeps
             self.index = index
@@ -96,15 +99,18 @@ extension ItemDetailView {
             //WIP empty view
             HStack {
                 Button(action: {
-                    if index > 0 {
+                    if !leftButtonIsDisabled {
                         index -= 1
                     }
                 },
                        label: {
                     Image(systemName: "chevron.left")
                         .foregroundStyle(Color.gray)
+                        .opacity(leftButtonIsDisabled ? 0.3 : 1)
                 })
-                .disabled(index == 0)
+                .disabled(leftButtonIsDisabled)
+                
+                
                 //MARK: -- Upkeep Details...
                 VStack {
                     Text(upkeeps[index].description)
@@ -114,21 +120,24 @@ extension ItemDetailView {
                     Text("Every 2 Years")
                         .fontWeight(.semibold)
                         .foregroundStyle(.gray)
-                    Text("Saturday July 11, 2024")
+                    Text("\(upkeeps[index].dueDate, format: .dateTime.weekday(.wide)) \(upkeeps[index].dueDate, format: .dateTime.day().month().year())")
                         .font(.caption)
                         .foregroundStyle(.gray)
                 }
                 .frame(maxWidth: .infinity)
+                
+                
                 Button(action: {
-                    if index < upkeeps.count {
+                    if !rightButtonIsDisabled {
                         index += 1
                     }
                 },
                        label: {
                     Image(systemName: "chevron.right")
                         .foregroundStyle(Color.gray)
+                        .opacity(rightButtonIsDisabled ? 0.3 : 1)
                 })
-                .disabled(index == (upkeeps.count - 1))
+                .disabled(rightButtonIsDisabled)
             }
             .padding()
             
@@ -139,8 +148,8 @@ extension ItemDetailView {
                     .bold()
                     .padding(.horizontal)
                 List {
-                    ForEach(1..<4) { note in
-                        Text("This is a very important note.")
+                    ForEach(upkeeps[index].notes, id: \.self) { note in
+                        Text(note)
                     }
                     Button("+ New Note") {
                         print("Click click click")

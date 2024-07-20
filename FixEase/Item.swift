@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Item {
+struct Item: Hashable {
     var name: String
     var description: String
     var emoji: String
@@ -16,6 +16,7 @@ struct Item {
 
 
 extension Item {
+    static var list: [Item] = [.exRocketShip, .exGarden, .exCoffeeMaker, .exRocketShip, .exGarden, .exCoffeeMaker]
     static var exRocketShip = Item(name: "Rocket Ship", description: "MODEL LMNOP The American Dream", emoji: "🚀", upkeeps: Upkeep.listRocketShip)
     static var exGarden = Item(name: "Garden", description: "Front Yard", emoji: "🌻", upkeeps: Upkeep.listGarden)
     static var exCoffeeMaker = Item(name: "Coffee Maker", description: "Keurig", emoji: "☕️", upkeeps: Upkeep.listCoffeeMaker)

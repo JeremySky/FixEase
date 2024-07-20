@@ -12,7 +12,7 @@ struct ContentView: View {
         NavigationStack {
             ZStack {
                 Background()
-                MainView()
+                MainView(Item.list)
             }
         }
     }
