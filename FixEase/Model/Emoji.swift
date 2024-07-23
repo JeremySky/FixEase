@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum EmojiSelection: String, CaseIterable {
+    case 🐕, 🐩, 🐈, 🐈‍, 🐓, 🦜, 🌵, 🌲, 🌳, 🌴, 🌱, 🪴, 🌻, 🍓, 🍎, 🍌, 🍉, 🍍, 🌽, 🥨, 🎂, 🏀, 🎾, 🎹, 🥁, 🎻, 🚗, 🚙, 🛶, 🏡, 📱, 💻, 💈, 🚽, 🛁, 🚀
+}
+
 extension String {
     func onlyEmoji() -> String {
         return self.filter({$0.isEmoji})

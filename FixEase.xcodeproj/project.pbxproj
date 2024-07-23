@@ -17,6 +17,7 @@
 		62813A262C4B2740001C9EF2 /* Upkeep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A252C4B2740001C9EF2 /* Upkeep.swift */; };
 		62813A2A2C4B2A84001C9EF2 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A292C4B2A84001C9EF2 /* Item.swift */; };
 		62813A2C2C4B2B70001C9EF2 /* Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A2B2C4B2B70001C9EF2 /* Emoji.swift */; };
+		62813A302C4F3E0D001C9EF2 /* ModifyItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A2F2C4F3E0D001C9EF2 /* ModifyItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		62813A252C4B2740001C9EF2 /* Upkeep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Upkeep.swift; sourceTree = "<group>"; };
 		62813A292C4B2A84001C9EF2 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		62813A2B2C4B2B70001C9EF2 /* Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
+		62813A2F2C4F3E0D001C9EF2 /* ModifyItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				62802D492C488DAD00234DE4 /* MainView.swift */,
 				62813A232C49DA22001C9EF2 /* ItemDetailView.swift */,
 				62813A1F2C49C35C001C9EF2 /* UpkeepRowView.swift */,
+				62813A2F2C4F3E0D001C9EF2 /* ModifyItemView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -176,6 +179,7 @@
 				62813A2C2C4B2B70001C9EF2 /* Emoji.swift in Sources */,
 				62802D4A2C488DAD00234DE4 /* MainView.swift in Sources */,
 				62813A262C4B2740001C9EF2 /* Upkeep.swift in Sources */,
+				62813A302C4F3E0D001C9EF2 /* ModifyItemView.swift in Sources */,
 				62813A2A2C4B2A84001C9EF2 /* Item.swift in Sources */,
 				62802D3C2C46E4ED00234DE4 /* FixEaseApp.swift in Sources */,
 				62813A202C49C35C001C9EF2 /* UpkeepRowView.swift in Sources */,
