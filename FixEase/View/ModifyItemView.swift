@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ModifyItemView: View {
+    
+    @EnvironmentObject var viewManager: ViewManager
     @State var item: Item
     
     init(_ item: Item) {
@@ -17,26 +19,41 @@ struct ModifyItemView: View {
     var body: some View {
         VStack {
             HStack {
-                Button("Cancel", action: {})
+                Button("Cancel", action: { viewManager.modifyItemIsPresenting = false })
                 Spacer()
                 Button("Save", action: {})
             }
             .foregroundStyle(Color.greenDark)
-            .padding()
+            .padding(.vertical)
             
             Text("Modify Item")
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
             
-            Form {
-                Section("Name") {
-                    TextField("i.e. Car", text: $item.name)
-                }
-                Section("Description") {
-                    TextField("i.e. 2018 Nissan", text: $item.description)
-                }
-                Section("Icon") {
+            VStack {
+                Text("NAME")
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                TextField("i.e. Car", text: $item.name)
+                    .textFieldStyle(.roundedBorder)
+            }
+            
+            VStack {
+                Text("DESCRIPTION")
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                TextField("i.e. 2018 Nissan", text: $item.description)
+                    .textFieldStyle(.roundedBorder)
+            }
+            
+            VStack {
+                Text("ICON")
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack {
                     HStack {
                         Text("Selected:")
                         TextField("Pick an Emoji", text: $item.emoji)
@@ -44,6 +61,9 @@ struct ModifyItemView: View {
                                 item.emoji = newValue.onlyEmoji()
                             }
                     }
+                    .padding(.horizontal, 8)
+                    Divider()
+                        .padding(.horizontal, 8)
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHGrid(rows: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 18) {
                             ForEach(EmojiSelection.allCases, id: \.self) { emoji in
@@ -54,17 +74,28 @@ struct ModifyItemView: View {
                             }
                             .padding(.vertical, 5)
                         }
+                        .padding(.horizontal, 8)
                     }
+                    .frame(maxHeight: 300)
                 }
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .foregroundStyle(.white)
+                )
+                Spacer()
             }
         }
+        .padding(.horizontal)
         .background(.gray.opacity(0.1))
     }
 }
 
 #Preview {
-    Text("ASDF")
-        .sheet(isPresented: .constant(true), content: {
+    @State var viewManager = ViewManager(modifyItemIsPresenting: true)
+    return Text("ASDF")
+        .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
             ModifyItemView(Item.exRocketShip)
+                .environmentObject(viewManager)
         })
 }

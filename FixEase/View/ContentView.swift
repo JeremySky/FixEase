@@ -13,18 +13,20 @@ enum ViewSelection {
 
 class ViewManager: ObservableObject {
     @Published var current: ViewSelection
+    @Published var modifyItemIsPresenting: Bool
     
-    init(current: ViewSelection = .main) {
+    init(current: ViewSelection = .main, modifyItemIsPresenting: Bool = false) {
         self.current = current
+        self.modifyItemIsPresenting = modifyItemIsPresenting
     }
 }
 
 struct ContentView: View {
-    @StateObject var viewSelection = ViewManager()
+    @StateObject var viewManager = ViewManager()
     
     var body: some View {
         ZStack {
-            switch viewSelection.current {
+            switch viewManager.current {
             case .main:
                 MainView(Item.list)
             case .itemDetail(let item):
@@ -32,7 +34,7 @@ struct ContentView: View {
             }
         }
         .background(Background())
-        .environmentObject(viewSelection)
+        .environmentObject(viewManager)
     }
 }
 
@@ -48,7 +50,7 @@ extension ContentView {
                     Spacer()
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
-                .offset(y: -geometry.size.height/6.5)
+                .offset(y: -geometry.size.height/6.3)
             }
         }
     }

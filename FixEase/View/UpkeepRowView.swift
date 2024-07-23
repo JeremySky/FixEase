@@ -69,7 +69,8 @@ struct UpkeepRowView: View {
             }
             .padding()
         }
-        .frame(width: .infinity, height: 115)
+        .frame(maxWidth: .infinity)
+        .frame(height: 115)
     }
 }
 
