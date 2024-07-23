@@ -7,14 +7,32 @@
 
 import SwiftUI
 
+enum ViewSelection {
+    case main, itemDetail(Item)
+}
+
+class ViewManager: ObservableObject {
+    @Published var current: ViewSelection
+    
+    init(current: ViewSelection = .main) {
+        self.current = current
+    }
+}
+
 struct ContentView: View {
+    @StateObject var viewSelection = ViewManager()
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Background()
+        ZStack {
+            switch viewSelection.current {
+            case .main:
                 MainView(Item.list)
+            case .itemDetail(let item):
+                ItemDetailView(item)
             }
         }
+        .background(Background())
+        .environmentObject(viewSelection)
     }
 }
 
@@ -30,7 +48,7 @@ extension ContentView {
                     Spacer()
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
-                .offset(y: -geometry.size.height/4.5)
+                .offset(y: -geometry.size.height/6.5)
             }
         }
     }

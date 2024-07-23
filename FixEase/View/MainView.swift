@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainView: View {
     
+    @EnvironmentObject var viewSelection: ViewManager
     @State var collection: [Item]
     @State var numCompleted: Int = 0
     
@@ -33,6 +34,14 @@ struct MainView: View {
     
     var body: some View {
         VStack(spacing: 15) {
+            HStack {
+                Spacer()
+                Button("New Item") {
+                    // Modify Item
+                }
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal)
             
             
             //MARK: -- Welcome message...
@@ -53,8 +62,8 @@ struct MainView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 17) {
                     ForEach(collection, id: \.self) { item in
-                        NavigationLink {
-                            Text(item.name)
+                        Button {
+                            viewSelection.current = .itemDetail(item)
                         } label: {
                             ZStack {
                                 Circle()
@@ -111,7 +120,7 @@ struct MainView: View {
 }
 
 #Preview {
-    NavigationStack {
-        MainView(Item.list)
-    }
+    MainView(Item.list)
+        .background(ContentView.Background())
+        .environmentObject(ViewManager())
 }
