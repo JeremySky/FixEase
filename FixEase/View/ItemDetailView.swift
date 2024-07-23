@@ -70,7 +70,7 @@ struct ItemDetailView: View {
             UpkeepsDetailView($item.upkeeps)
         }
         .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView(item)
+            ModifyItemView($item)
         })
     }
 }

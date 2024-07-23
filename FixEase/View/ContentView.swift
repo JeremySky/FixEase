@@ -14,10 +14,12 @@ enum ViewSelection {
 class ViewManager: ObservableObject {
     @Published var current: ViewSelection
     @Published var modifyItemIsPresenting: Bool
+    @Published var modifyUpkeepIsPresenting: Bool
     
-    init(current: ViewSelection = .main, modifyItemIsPresenting: Bool = false) {
+    init(current: ViewSelection = .main, modifyItemIsPresenting: Bool = false, modifyUpkeepIsPresenting: Bool = false) {
         self.current = current
         self.modifyItemIsPresenting = modifyItemIsPresenting
+        self.modifyUpkeepIsPresenting = modifyUpkeepIsPresenting
     }
 }
 

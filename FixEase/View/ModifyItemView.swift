@@ -10,21 +10,21 @@ import SwiftUI
 struct ModifyItemView: View {
     
     @EnvironmentObject var viewManager: ViewManager
-    @State var item: Item
+    @Binding var item: Item
     
-    init(_ item: Item) {
-        self.item = item
+    init(_ item: Binding<Item>) {
+        self._item = item
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 25) {
             HStack {
                 Button("Cancel", action: { viewManager.modifyItemIsPresenting = false })
                 Spacer()
                 Button("Save", action: {})
             }
             .foregroundStyle(Color.greenDark)
-            .padding(.vertical)
+            .padding(.top)
             
             Text("Modify Item")
                 .font(.largeTitle.bold())
@@ -93,9 +93,10 @@ struct ModifyItemView: View {
 
 #Preview {
     @State var viewManager = ViewManager(modifyItemIsPresenting: true)
+    @State var item = Item.exRocketShip
     return Text("ASDF")
         .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView(Item.exRocketShip)
+            ModifyItemView($item)
                 .environmentObject(viewManager)
         })
 }
