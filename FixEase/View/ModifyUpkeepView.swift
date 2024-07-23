@@ -10,12 +10,12 @@ import SwiftUI
 struct ModifyUpkeepView: View {
     
     @EnvironmentObject var viewManager: ViewManager
-    @Binding var upkeep: Upkeep
+    @State var upkeep: Upkeep
     
     @State var unit: Int = 1
     
-    init(_ upkeep: Binding<Upkeep>) {
-        self._upkeep = upkeep
+    init(_ upkeep: Upkeep) {
+        self._upkeep = State(initialValue: upkeep)
     }
     
     var body: some View {
@@ -28,7 +28,7 @@ struct ModifyUpkeepView: View {
             .foregroundStyle(Color.greenDark)
             .padding(.top)
             
-            Text("Modify UPKEEP")
+            Text("Modify Upkeep")
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -37,8 +37,15 @@ struct ModifyUpkeepView: View {
                     .font(.caption)
                     .foregroundStyle(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                TextField("i.e. Car Wash", text: $upkeep.description)
-                    .textFieldStyle(.roundedBorder)
+                HStack {
+                    TextField("i.e. Car Wash", text: $upkeep.description)
+                        .textFieldStyle(.roundedBorder)
+                    Button(role: .destructive, action: { upkeep.description = "" }) {
+                        Image(systemName: "x.square")
+                            .font(.title2)
+                    }
+                    .disabled(upkeep.description.isEmpty)
+                }
             }
             
             VStack {
@@ -46,11 +53,7 @@ struct ModifyUpkeepView: View {
                     .font(.caption)
                     .foregroundStyle(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                HStack {
-                    Text("Enter Next Due Date")
-                    Spacer()
-                    Text("8/01/2024")
-                }
+                DatePicker("Next Due Date", selection: $upkeep.dueDate, displayedComponents: .date)
                 .padding(.horizontal, 6)
                 .padding(.vertical, 8)
                 .background(
@@ -92,7 +95,7 @@ struct ModifyUpkeepView: View {
     @State var upkeep = Item.exRocketShip.upkeeps[0]
     return Text("ASDF")
         .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyUpkeepView($upkeep)
+            ModifyUpkeepView(upkeep)
                 .environmentObject(viewManager)
         })
 }

@@ -11,75 +11,109 @@ struct ItemDetailView: View {
     
     @EnvironmentObject var viewManager: ViewManager
     @State var item: Item
+    @State var newNote: String = ""
     
     init(_ item: Item) {
         self.item = item
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                Button("Back") {
-                    viewManager.current = .main
-                }
-                Spacer()
-                Button("New Upkeep") {
-                    // NEW UPKEEP
-                }
-            }
-            .padding(.horizontal)
-            .foregroundStyle(.white)
-            
-            //MARK: -- Item Details...
-            Button(action: { viewManager.modifyItemIsPresenting = true }) {
+        ZStack {
+            VStack {
                 HStack {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(item.name)
-                            .font(.title2.weight(.heavy))
-                            .foregroundStyle(Color.greenDark)
-                        Text(item.description)
-                            .font(.caption)
-                            .foregroundStyle(.gray)
-                            .padding(.bottom, 10)
-                        Text("\(item.upkeeps.count) Upkeeps")
-                            .font(.largeTitle.weight(.black).width(.compressed))
-                            .foregroundStyle(Color.black.opacity(0.8))
+                    Button("Back") {
+                        viewManager.current = .main
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    
-                    Text(item.emoji)
-                        .font(.custom("Item Emoji", fixedSize: 80))
-                        .padding(.trailing)
+                    Spacer()
+                    Button("New Upkeep") {
+                        // NEW UPKEEP
+                    }
                 }
-                .padding(.top, 2)
-                .padding(.bottom, 4)
-                .background(
+                .padding(.horizontal)
+                .foregroundStyle(.white)
+                
+                //MARK: -- Item Details...
+                Button(action: { viewManager.modifyItemIsPresenting = true }) {
                     HStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(LinearGradient(colors: [.white, .clear], startPoint: .center, endPoint: .trailing))
-                        Spacer().frame(width: 5)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(item.name)
+                                .font(.title2.weight(.heavy))
+                                .foregroundStyle(Color.greenDark)
+                            Text(item.description)
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                                .padding(.bottom, 10)
+                            Text("\(item.upkeeps.count) Upkeeps")
+                                .font(.largeTitle.weight(.black).width(.compressed))
+                                .foregroundStyle(Color.black.opacity(0.8))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        
+                        Text(item.emoji)
+                            .font(.custom("Item Emoji", fixedSize: 80))
+                            .padding(.trailing)
                     }
-                        .shadow(radius: 10, x: -5, y: 5)
-                )
+                    .padding(.top, 2)
+                    .padding(.bottom, 4)
+                    .background(
+                        HStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundStyle(LinearGradient(colors: [.white, .clear], startPoint: .center, endPoint: .trailing))
+                            Spacer().frame(width: 5)
+                        }
+                            .shadow(radius: 10, x: -5, y: 5)
+                    )
+                }
+                .padding()
+                
+                Spacer().frame(height: 40)
+                
+                UpkeepsDetailView($item.upkeeps)
             }
-            .padding()
             
-            Spacer().frame(height: 40)
             
-            UpkeepsDetailView($item.upkeeps)
+            //MARK: -- Modify Note Sheet...
+            if viewManager.modifyNoteIsPresented {
+                ZStack(alignment: .bottom) {
+                    Color.gray.opacity(0.6)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            newNote = ""
+                            viewManager.modifyNoteIsPresented = false
+                        }
+                    HStack {
+                        TextField("", text: $newNote, prompt: Text("New Note").foregroundStyle(.white.opacity(0.6)))
+                        Button(action: { newNote = "" }) {
+                            Image(systemName: "x.square")
+                                .font(.title2)
+                                .opacity(newNote.isEmpty ? 0.6 : 1)
+                        }
+                        .disabled(newNote.isEmpty)
+                    }
+                    .padding()
+                    .foregroundStyle(.white)
+                    .background(
+                        Color.black.opacity(0.7)
+                    )
+                }
+            }
         }
         .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView($item)
+            ModifyItemView(item)
         })
     }
 }
+
+
+
 
 
 extension ItemDetailView {
     
     struct UpkeepsDetailView: View {
         
+        @EnvironmentObject var viewManager: ViewManager
         @Binding var upkeeps: [Upkeep]
         @State var index: Int = 0
         
@@ -156,7 +190,7 @@ extension ItemDetailView {
                             Text(note)
                         }
                         Button("+ New Note") {
-                            print("Click click click")
+                            viewManager.modifyNoteIsPresented = true
                         }
                         .foregroundStyle(Color.greenDark)
                     }

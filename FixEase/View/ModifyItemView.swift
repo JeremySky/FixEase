@@ -10,10 +10,10 @@ import SwiftUI
 struct ModifyItemView: View {
     
     @EnvironmentObject var viewManager: ViewManager
-    @Binding var item: Item
+    @State var item: Item
     
-    init(_ item: Binding<Item>) {
-        self._item = item
+    init(_ item: Item) {
+        self._item = State(initialValue: item)
     }
     
     var body: some View {
@@ -35,8 +35,15 @@ struct ModifyItemView: View {
                     .font(.caption)
                     .foregroundStyle(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                TextField("i.e. Car", text: $item.name)
-                    .textFieldStyle(.roundedBorder)
+                HStack {
+                    TextField("i.e. Car", text: $item.name)
+                        .textFieldStyle(.roundedBorder)
+                    Button(role: .destructive, action: { item.name = "" }) {
+                        Image(systemName: "x.square")
+                            .font(.title2)
+                    }
+                    .disabled(item.name.isEmpty)
+                }
             }
             
             VStack {
@@ -44,8 +51,15 @@ struct ModifyItemView: View {
                     .font(.caption)
                     .foregroundStyle(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                TextField("i.e. 2018 Nissan", text: $item.description)
-                    .textFieldStyle(.roundedBorder)
+                HStack {
+                    TextField("i.e. 2018 Nissan", text: $item.description)
+                        .textFieldStyle(.roundedBorder)
+                    Button(role: .destructive, action: { item.description = "" }) {
+                        Image(systemName: "x.square")
+                            .font(.title2)
+                    }
+                    .disabled(item.description.isEmpty)
+                }
             }
             
             VStack {
@@ -96,7 +110,7 @@ struct ModifyItemView: View {
     @State var item = Item.exRocketShip
     return Text("ASDF")
         .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView($item)
+            ModifyItemView(item)
                 .environmentObject(viewManager)
         })
 }
