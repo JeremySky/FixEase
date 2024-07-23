@@ -37,7 +37,7 @@ struct ContentView: View {
                 ItemDetailView(item)
             }
         }
-        .background(Background())
+        .background(Background().ignoresSafeArea(.keyboard))
         .environmentObject(viewManager)
     }
 }
