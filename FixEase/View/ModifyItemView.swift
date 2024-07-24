@@ -8,12 +8,26 @@
 import SwiftUI
 
 struct ModifyItemView: View {
+    enum FocusedField {
+        case name, description, icon
+    }
+    @FocusState private var focusedField: FocusedField?
+    
     
     @EnvironmentObject var viewManager: ViewManager
     @State var item: Item
+    let submit: (Item) -> Void
+    let title: String
+    let submitActionString: String
+    let addUpkeeps: Bool
     
-    init(_ item: Item) {
+    init(_ item: Item, submit: @escaping (Item) -> Void) {
+        let isNew = item == Item()
         self._item = State(initialValue: item)
+        self.title = isNew ? "New Item" : "Modify Item"
+        self.submitActionString = isNew ? "Add" : "Save"
+        self.submit = submit
+        self.addUpkeeps = isNew
     }
     
     var body: some View {
@@ -21,12 +35,12 @@ struct ModifyItemView: View {
             HStack {
                 Button("Cancel", action: { viewManager.modifyItemIsPresenting = false })
                 Spacer()
-                Button("Save", action: {})
+                Button(submitActionString, action: { submit(item) })
             }
             .foregroundStyle(Color.greenDark)
             .padding(.top)
             
-            Text("Modify Item")
+            Text(title)
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -38,11 +52,14 @@ struct ModifyItemView: View {
                 HStack {
                     TextField("i.e. Car", text: $item.name)
                         .textFieldStyle(.roundedBorder)
-                    Button(role: .destructive, action: { item.name = "" }) {
-                        Image(systemName: "x.square")
-                            .font(.title2)
+                        .focused($focusedField, equals: .name)
+                    if focusedField == .name {
+                        Button(role: .destructive, action: { item.name = "" }) {
+                            Image(systemName: "x.square")
+                                .font(.title2)
+                        }
+                        .disabled(item.name.isEmpty)
                     }
-                    .disabled(item.name.isEmpty)
                 }
             }
             
@@ -54,11 +71,14 @@ struct ModifyItemView: View {
                 HStack {
                     TextField("i.e. 2018 Nissan", text: $item.description)
                         .textFieldStyle(.roundedBorder)
-                    Button(role: .destructive, action: { item.description = "" }) {
-                        Image(systemName: "x.square")
-                            .font(.title2)
+                        .focused($focusedField, equals: .description)
+                    if focusedField == .description {
+                        Button(role: .destructive, action: { item.description = "" }) {
+                            Image(systemName: "x.square")
+                                .font(.title2)
+                        }
+                        .disabled(item.description.isEmpty)
                     }
-                    .disabled(item.description.isEmpty)
                 }
             }
             
@@ -74,23 +94,26 @@ struct ModifyItemView: View {
                             .onChange(of: item.emoji) { oldValue, newValue in
                                 item.emoji = newValue.onlyEmoji()
                             }
+                            .focused($focusedField, equals: .icon)
                     }
                     .padding(.horizontal, 8)
-                    Divider()
-                        .padding(.horizontal, 8)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHGrid(rows: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 18) {
-                            ForEach(EmojiSelection.allCases, id: \.self) { emoji in
-                                Button(action: {item.emoji = emoji.rawValue}, label: {
-                                    Text(emoji.rawValue)
-                                        .font(.custom("Emoji Selector", size: 60))
-                                })
+                    if focusedField == nil {
+                        Divider()
+                            .padding(.horizontal, 8)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            LazyHGrid(rows: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 24) {
+                                ForEach(EmojiSelection.allCases, id: \.self) { emoji in
+                                    Button(action: {item.emoji = emoji.rawValue}, label: {
+                                        Text(emoji.rawValue)
+                                            .font(.custom("Emoji Selector", size: 60))
+                                    })
+                                }
+                                .padding(.vertical, 5)
                             }
-                            .padding(.vertical, 5)
+                            .padding(.horizontal, 12)
                         }
-                        .padding(.horizontal, 8)
+                        .frame(maxHeight: 300)
                     }
-                    .frame(maxHeight: 300)
                 }
                 .padding(.vertical, 8)
                 .background(
@@ -110,7 +133,7 @@ struct ModifyItemView: View {
     @State var item = Item.exRocketShip
     return Text("ASDF")
         .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView(item)
+            ModifyItemView(item) { _ in }
                 .environmentObject(viewManager)
         })
 }

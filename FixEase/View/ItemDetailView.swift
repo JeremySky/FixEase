@@ -10,7 +10,7 @@ import SwiftUI
 struct ItemDetailView: View {
     
     @EnvironmentObject var viewManager: ViewManager
-    @State var item: Item
+    @Binding var item: Item
     @State var upkeepIndex: Int
     @State var modifyNote: (string: String, isNew: Bool, index: Int?)
     
@@ -19,10 +19,10 @@ struct ItemDetailView: View {
     var leftButtonIsDisabled: Bool { upkeepIndex <= 0 }
     var rightButtonIsDisabled: Bool { upkeepIndex >= item.upkeeps.count - 1 }
     
-    init(_ item: Item, upkeepIndex: Int = 0, note: (String, Bool, Int?) = ("", true, nil)) {
-        self._item = State(initialValue: item)
-        self.upkeepIndex = upkeepIndex
-        self.modifyNote = note
+    init(_ item: Binding<Item>, upkeepIndex: Int = 0, note: (String, Bool, Int?) = ("", true, nil)) {
+        self._item = item
+        self._upkeepIndex = State(initialValue: upkeepIndex)
+        self._modifyNote = State(initialValue: note)
     }
     
     var body: some View {
@@ -170,7 +170,10 @@ struct ItemDetailView: View {
             }
         }
         .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView(item)
+            ModifyItemView(item) { item in
+                self.item = item
+                viewManager.modifyItemIsPresenting = false
+            }
         })
     }
     

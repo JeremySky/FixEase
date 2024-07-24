@@ -8,10 +8,19 @@
 import Foundation
 
 struct Item: Hashable {
+    var id: UUID
     var name: String
     var description: String
     var emoji: String
     var upkeeps: [Upkeep]
+    
+    init(id: UUID = UUID(), name: String = "", description: String = "", emoji: String = "", upkeeps: [Upkeep] = []) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.emoji = emoji
+        self.upkeeps = upkeeps
+    }
 }
 
 
