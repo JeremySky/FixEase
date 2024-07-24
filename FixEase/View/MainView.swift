@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MainView: View {
     
-    @EnvironmentObject var viewSelection: ViewManager
-    @State var collection: [Item]
+    @EnvironmentObject var viewManager: ViewManager
+    @Binding var collection: [Item]
     @State var numCompleted: Int = 0
     
     var upkeeps: [Upkeep] {
@@ -28,8 +28,8 @@ struct MainView: View {
         return list
     }
     
-    init(_ collection: [Item]) {
-        self.collection = collection
+    init(_ collection: Binding<[Item]>) {
+        self._collection = collection
     }
     
     var body: some View {
@@ -37,7 +37,7 @@ struct MainView: View {
             HStack {
                 Spacer()
                 Button("New Item") {
-                    // Modify Item
+                    viewManager.modifyItemIsPresenting = true
                 }
             }
             .foregroundStyle(.white)
@@ -63,7 +63,7 @@ struct MainView: View {
                 HStack(spacing: 17) {
                     ForEach(collection, id: \.self) { item in
                         Button {
-                            viewSelection.current = .itemDetail(item)
+                            viewManager.current = .itemDetail(item)
                         } label: {
                             ZStack {
                                 Circle()
@@ -110,17 +110,22 @@ struct MainView: View {
             
             
         }
-        .toolbar {
-            Button("Add Item") {
-                //ADD ITEM
+        .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
+            ModifyItemView(Item()) { item in
+                collection.append(item)
+                viewManager.modifyItemIsPresenting = false
+                viewManager.current = .itemDetail(item)
             }
-            .foregroundStyle(.white)
-        }
+        })
+        .sheet(isPresented: $viewManager.modifyUpkeepIsPresenting, content: {
+//            ModifyUpkeepView(Upkeep())
+        })
     }
 }
 
 #Preview {
-    MainView(Item.list)
+    @State var collection = Item.list
+    return MainView($collection)
         .background(ContentView.Background())
         .environmentObject(ViewManager())
 }

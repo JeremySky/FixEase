@@ -27,14 +27,15 @@ class ViewManager: ObservableObject {
 
 struct ContentView: View {
     @StateObject var viewManager = ViewManager()
+    @State var collection: [Item] = Item.list
     
     var body: some View {
         ZStack {
             switch viewManager.current {
             case .main:
-                MainView(Item.list)
-            case .itemDetail(let item):
-                ItemDetailView(item)
+                MainView($collection)
+            case .itemDetail(let matchingItem):
+                ItemDetailView($collection.first(where: { $0.wrappedValue.id == matchingItem.id })!)
             }
         }
         .background(Background().ignoresSafeArea(.keyboard))
