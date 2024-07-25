@@ -12,7 +12,6 @@ struct ModifyUpkeepView: View {
     @EnvironmentObject var viewManager: ViewManager
     @State var upkeep: Upkeep
     
-    @State var unit: Int = 1
     
     init(_ upkeep: Upkeep) {
         self._upkeep = State(initialValue: upkeep)
@@ -69,12 +68,19 @@ struct ModifyUpkeepView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 VStack {
                     HStack {
-                        Text("Rule")
-                        Spacer()
-                        Text("(Unit) Years")
+                        Text("Every:")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Stepper(upkeep.cycle.description, value: $upkeep.cycle.unit)
                     }
-                    Divider()
-                    Stepper("Unit: \(unit)", value: $unit)
+                    HStack {
+                        Text("Unit")
+                        Spacer()
+                        Picker("Unit", selection: $upkeep.cycle.rule) {
+                            ForEach(Upkeep.Cycle.Rule.allCases) { rule in
+                                Text(upkeep.cycle.unit == 1 ? rule.singularDescription : rule.pluralDescription)
+                            }
+                        }
+                    }
                 }
                 .padding(.horizontal, 6)
                 .padding(.vertical, 8)
