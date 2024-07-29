@@ -14,7 +14,7 @@ struct Upkeep: Hashable {
     var emoji: String?
     var notes: [String]
     
-    init(description: String, dueDate: Date, cycle: Cycle = Cycle(rule: .weeks, unit: 1), emoji: String? = nil, notes: [String] = []) {
+    init(description: String = "", dueDate: Date = Date(), cycle: Cycle = Cycle(rule: .weeks, unit: 1), emoji: String? = nil, notes: [String] = []) {
         self.description = description
         self.dueDate = dueDate
         self.cycle = cycle

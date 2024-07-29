@@ -21,7 +21,7 @@ struct ModifyItemView: View {
     let submitActionString: String
     let addUpkeeps: Bool
     
-    init(_ item: Item, submit: @escaping (Item) -> Void) {
+    init(_ item: Item = Item(), submit: @escaping (Item) -> Void) {
         let isNew = item.name.isEmpty
         self._item = State(initialValue: item)
         self.title = isNew ? "New Item" : "Modify Item"
@@ -33,7 +33,7 @@ struct ModifyItemView: View {
     var body: some View {
         VStack(spacing: 25) {
             HStack {
-                Button("Cancel", action: { viewManager.modifyItemIsPresenting = false })
+                Button("Cancel", action: { viewManager.sheet = nil })
                 Spacer()
                 Button(submitActionString, action: { submit(item) })
             }
@@ -129,11 +129,9 @@ struct ModifyItemView: View {
 }
 
 #Preview {
-    @State var viewManager = ViewManager(modifyItemIsPresenting: true)
     @State var item = Item.exRocketShip
     return Text("ASDF")
-        .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
+        .sheet(isPresented: .constant(true), content: {
             ModifyItemView(item) { _ in }
-                .environmentObject(viewManager)
         })
 }
