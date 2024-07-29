@@ -12,6 +12,7 @@ struct ItemDetailView: View {
     @EnvironmentObject var viewManager: ViewManager
     @Binding var item: Item
     @State var upkeepIndex: Int
+    @State var modifyNote: (string: String, isNew: Bool, index: Int?)?
     
     
     
