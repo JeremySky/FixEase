@@ -11,17 +11,31 @@ enum ViewSelection {
     case main, itemDetail(Item)
 }
 
+enum SheetPresenting: Identifiable {
+    case updateItem(Item), updateUpkeep(Upkeep), newItem, newUpkeep
+    
+    var id: String {
+        switch self {
+        case .updateItem:
+            "UpdateItem"
+        case .updateUpkeep:
+            "UpdateUpkeep"
+        case .newItem:
+            "NewItem"
+        case .newUpkeep:
+            "NewUpkeep"
+        }
+    }
+}
+
 class ViewManager: ObservableObject {
     @Published var current: ViewSelection
-    @Published var modifyItemIsPresenting: Bool
-    @Published var modifyUpkeepIsPresenting: Bool
-    @Published var modifyNoteIsPresented: Bool
+    @Published var sheet: SheetPresenting?
+    @Published var modifyNote: String?
     
-    init(current: ViewSelection = .main, modifyItemIsPresenting: Bool = false, modifyUpkeepIsPresenting: Bool = false, modifyNoteIsPresented: Bool = false) {
+    init(current: ViewSelection = .main, sheet: SheetPresenting? = nil) {
         self.current = current
-        self.modifyItemIsPresenting = modifyItemIsPresenting
-        self.modifyUpkeepIsPresenting = modifyUpkeepIsPresenting
-        self.modifyNoteIsPresented = modifyNoteIsPresented
+        self.sheet = sheet
     }
 }
 
@@ -37,9 +51,28 @@ struct ContentView: View {
             case .itemDetail(let matchingItem):
                 ItemDetailView($collection.first(where: { $0.wrappedValue.id == matchingItem.id })!)
             }
+            if let modifyNote = viewManager.modifyNote {
+                ModifyNoteView(modifyNote) { _ in }
+            }
         }
         .background(Background().ignoresSafeArea(.keyboard))
         .environmentObject(viewManager)
+        .sheet(item: $viewManager.sheet) { sheet in
+            switch sheet {
+            case .updateItem(let item):
+                ModifyItemView(item) { _ in }
+                    .environmentObject(viewManager)
+            case .updateUpkeep(let upkeep):
+                ModifyUpkeepView(upkeep) {}
+                    .environmentObject(viewManager)
+            case .newItem:
+                ModifyItemView() { _ in }
+                    .environmentObject(viewManager)
+            case .newUpkeep:
+                ModifyUpkeepView() {}
+                    .environmentObject(viewManager)
+            }
+        }
     }
 }
 

@@ -11,23 +11,28 @@ struct ModifyUpkeepView: View {
     
     @EnvironmentObject var viewManager: ViewManager
     @State var upkeep: Upkeep
+    let submit: () -> Void
+    
+    let isNew: Bool
     
     
-    init(_ upkeep: Upkeep) {
+    init(_ upkeep: Upkeep = Upkeep(), submit: @escaping () -> Void) {
         self._upkeep = State(initialValue: upkeep)
+        self.submit = submit
+        self.isNew = upkeep.description.isEmpty
     }
     
     var body: some View {
         VStack(spacing: 25) {
             HStack {
-                Button("Cancel", action: { viewManager.modifyUpkeepIsPresenting = false })
+                Button("Cancel", action: { viewManager.sheet = nil })
                 Spacer()
-                Button("Save", action: {})
+                Button(isNew ? "Add" : "Save", action: {})
             }
             .foregroundStyle(Color.greenDark)
             .padding(.top)
             
-            Text("Modify Upkeep")
+            Text(isNew ? "New Upkeep" : "Modify Upkeep")
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -69,8 +74,9 @@ struct ModifyUpkeepView: View {
                 VStack {
                     HStack {
                         Text("Every:")
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Spacer()
                         Stepper(upkeep.cycle.description, value: $upkeep.cycle.unit)
+                            .frame(width: 180)
                     }
                     HStack {
                         Text("Unit")
@@ -97,11 +103,10 @@ struct ModifyUpkeepView: View {
 }
 
 #Preview {
-    @State var viewManager = ViewManager(modifyItemIsPresenting: true)
     @State var upkeep = Item.exRocketShip.upkeeps[0]
     return Text("ASDF")
-        .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyUpkeepView(upkeep)
-                .environmentObject(viewManager)
+        .sheet(isPresented: .constant(true), content: {
+            ModifyUpkeepView(upkeep) {}
+                .environmentObject(ViewManager())
         })
 }

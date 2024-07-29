@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6238AC2F2C585F8900F75B50 /* ModifyNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */; };
 		62802D3C2C46E4ED00234DE4 /* FixEaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */; };
 		62802D3E2C46E4ED00234DE4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62802D3D2C46E4ED00234DE4 /* ContentView.swift */; };
 		62802D402C46E4F200234DE4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 62802D3F2C46E4F200234DE4 /* Assets.xcassets */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyNoteView.swift; sourceTree = "<group>"; };
 		62802D382C46E4ED00234DE4 /* FixEase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FixEase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixEaseApp.swift; sourceTree = "<group>"; };
 		62802D3D2C46E4ED00234DE4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 				62813A1F2C49C35C001C9EF2 /* UpkeepRowView.swift */,
 				62813A2F2C4F3E0D001C9EF2 /* ModifyItemView.swift */,
 				62813A312C501C6C001C9EF2 /* ModifyUpkeepView.swift */,
+				6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -177,6 +180,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6238AC2F2C585F8900F75B50 /* ModifyNoteView.swift in Sources */,
 				62813A242C49DA22001C9EF2 /* ItemDetailView.swift in Sources */,
 				62802D3E2C46E4ED00234DE4 /* ContentView.swift in Sources */,
 				62813A2C2C4B2B70001C9EF2 /* Emoji.swift in Sources */,

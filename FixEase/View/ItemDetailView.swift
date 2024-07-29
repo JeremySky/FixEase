@@ -12,17 +12,15 @@ struct ItemDetailView: View {
     @EnvironmentObject var viewManager: ViewManager
     @Binding var item: Item
     @State var upkeepIndex: Int
-    @State var modifyNote: (string: String, isNew: Bool, index: Int?)
     
     
     
     var leftButtonIsDisabled: Bool { upkeepIndex <= 0 }
     var rightButtonIsDisabled: Bool { upkeepIndex >= item.upkeeps.count - 1 }
     
-    init(_ item: Binding<Item>, upkeepIndex: Int = 0, note: (String, Bool, Int?) = ("", true, nil)) {
+    init(_ item: Binding<Item>, upkeepIndex: Int = 0) {
         self._item = item
         self._upkeepIndex = State(initialValue: upkeepIndex)
-        self._modifyNote = State(initialValue: note)
     }
     
     var body: some View {
@@ -34,14 +32,14 @@ struct ItemDetailView: View {
                     }
                     Spacer()
                     Button("New Upkeep") {
-                        // NEW UPKEEP
+                        viewManager.sheet = .newUpkeep
                     }
                 }
                 .padding(.horizontal)
                 .foregroundStyle(.white)
                 
                 //MARK: -- Item Details...
-                Button(action: { viewManager.modifyItemIsPresenting = true }) {
+                Button(action: { viewManager.sheet = .updateItem(item) }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.name)
@@ -101,19 +99,21 @@ struct ItemDetailView: View {
                         
                         
                         //MARK: -- Upkeep Details...
-                        VStack {
-                            Text(item.upkeeps[upkeepIndex].description)
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundStyle(Color.greenDark)
-                            Text("Every 2 Years")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.gray)
-                            Text("\(item.upkeeps[upkeepIndex].dueDate, format: .dateTime.weekday(.wide)) \(item.upkeeps[upkeepIndex].dueDate, format: .dateTime.day().month().year())")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
+                        Button(action: { viewManager.sheet = .updateUpkeep(item.upkeeps[upkeepIndex]) }) {
+                            VStack {
+                                Text(item.upkeeps[upkeepIndex].description)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(Color.greenDark)
+                                Text("Every 2 Years")
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.gray)
+                                Text("\(item.upkeeps[upkeepIndex].dueDate, format: .dateTime.weekday(.wide)) \(item.upkeeps[upkeepIndex].dueDate, format: .dateTime.day().month().year())")
+                                    .font(.caption)
+                                    .foregroundStyle(.gray)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
-                        .frame(maxWidth: .infinity)
                         
                         
                         Button(action: {
@@ -139,15 +139,13 @@ struct ItemDetailView: View {
                         List {
                             ForEach(Array(item.upkeeps[upkeepIndex].notes.enumerated()), id: \.element) { index, note in
                                 Button(note) {
-                                    modifyNote = (note, false, index)
-                                    viewManager.modifyNoteIsPresented = true
+                                    viewManager.modifyNote = note
                                 }
                                 .foregroundStyle(.primary)
                                 .buttonStyle(.borderless)
                             }
                             Button("+ New Note") {
-                                modifyNote = ("", true, nil)
-                                viewManager.modifyNoteIsPresented = true
+                                viewManager.modifyNote = ""
                             }
                             .foregroundStyle(Color.greenDark)
                             .buttonStyle(.borderless)
@@ -158,31 +156,7 @@ struct ItemDetailView: View {
                     .padding()
                 }
             }
-            
-            
-            
-            //MARK: -- Modify Note Sheet...
-            if viewManager.modifyNoteIsPresented {
-                ModifyNoteView(modifyNote.string, isNew: modifyNote.isNew) { note in
-                    modifyNote.isNew ? addNote(note) : saveEditedNote(note)
-                    viewManager.modifyNoteIsPresented = false
-                }
-            }
         }
-        .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView(item) { item in
-                self.item = item
-                viewManager.modifyItemIsPresenting = false
-            }
-        })
-    }
-    
-    func addNote(_ note: String) {
-        item.upkeeps[upkeepIndex].notes.append(note)
-    }
-    func saveEditedNote(_ note: String) {
-        guard let index = modifyNote.index else { return }
-        item.upkeeps[upkeepIndex].notes[index] = note
     }
 }
 
@@ -193,47 +167,4 @@ struct ItemDetailView: View {
 #Preview {
     ContentView(viewManager: ViewManager(current: .itemDetail(Item.exRocketShip)))
         .background(ContentView.Background())
-}
-
-extension ItemDetailView {
-    struct ModifyNoteView: View {
-        
-        @EnvironmentObject var viewManager: ViewManager
-        let promptString: String
-        @State var note: String
-        let submit: (String) -> Void
-        
-        init(_ note: String, isNew: Bool, submit: @escaping (String) -> Void) {
-            self.note = note
-            self.promptString = { isNew ? "New Note" : "Edit Note"}()
-            self.submit = submit
-        }
-        
-        var body: some View {
-            ZStack(alignment: .bottom) {
-                Color.gray.opacity(0.6)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        viewManager.modifyNoteIsPresented = false
-                    }
-                HStack {
-                    TextField("", text: $note, prompt: Text(promptString).foregroundStyle(.white.opacity(0.6)))
-                        .onSubmit {
-                            submit(note)
-                        }
-                    Button(action: { note = "" }) {
-                        Image(systemName: "x.square")
-                            .font(.title2)
-                            .opacity(note.isEmpty ? 0.6 : 1)
-                    }
-                    .disabled(note.isEmpty)
-                }
-                .padding()
-                .foregroundStyle(.white)
-                .background(
-                    Color.black.opacity(0.7)
-                )
-            }
-        }
-    }
 }

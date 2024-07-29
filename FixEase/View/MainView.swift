@@ -36,9 +36,7 @@ struct MainView: View {
         VStack(spacing: 15) {
             HStack {
                 Spacer()
-                Button("New Item") {
-                    viewManager.modifyItemIsPresenting = true
-                }
+                Button("New Item") { viewManager.sheet = .newItem }
             }
             .foregroundStyle(.white)
             .padding(.horizontal)
@@ -110,16 +108,6 @@ struct MainView: View {
             
             
         }
-        .sheet(isPresented: $viewManager.modifyItemIsPresenting, content: {
-            ModifyItemView(Item()) { item in
-                collection.append(item)
-                viewManager.modifyItemIsPresenting = false
-                viewManager.current = .itemDetail(item)
-            }
-        })
-        .sheet(isPresented: $viewManager.modifyUpkeepIsPresenting, content: {
-//            ModifyUpkeepView(Upkeep())
-        })
     }
 }
 
