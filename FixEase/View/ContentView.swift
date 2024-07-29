@@ -51,6 +51,8 @@ struct ContentView: View {
             case .itemDetail(let matchingItem):
                 ItemDetailView($collection.first(where: { $0.wrappedValue.id == matchingItem.id })!)
             }
+            
+            // Custom Sheet for ModifyNoteView...
             if let modifyNote = viewManager.modifyNote {
                 ModifyNoteView(modifyNote) { _ in }
             }
