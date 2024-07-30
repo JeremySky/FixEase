@@ -8,13 +8,15 @@
 import Foundation
 
 struct Upkeep: Hashable {
+    var id: UUID
     var description: String
     var dueDate: Date
     var cycle: Cycle
     var emoji: String?
     var notes: [String]
     
-    init(description: String = "", dueDate: Date = Date(), cycle: Cycle = Cycle(rule: .weeks, unit: 1), emoji: String? = nil, notes: [String] = []) {
+    init(id: UUID = UUID(), description: String = "", dueDate: Date = Date(), cycle: Cycle = Cycle(rule: .weeks, unit: 1), emoji: String? = nil, notes: [String] = []) {
+        self.id = id
         self.description = description
         self.dueDate = dueDate
         self.cycle = cycle
@@ -68,9 +70,9 @@ extension Upkeep {
 
 extension Upkeep {
     static var listRocketShip: [Upkeep] = [
-        Upkeep(description: "Add rocket fuel", dueDate: Date(), cycle: Cycle(rule: .years, unit: 2), notes: ["Use S+ tier only.", "Never top off."]),
-        Upkeep(description: "Wash windows", dueDate: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, cycle: Cycle(rule: .months, unit: 1), notes: ["ONLY USE WINDEX", "Wash inside and outside."]),
-        Upkeep(description: "Rotate boosters", dueDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())!, cycle: Cycle(rule: .months, unit: 6), notes: ["Rotate clockwise"])
+        Upkeep(description: "Add Rocket Fuel", dueDate: Date(), cycle: Cycle(rule: .years, unit: 2), notes: ["Use S+ tier only.", "Never top off."]),
+        Upkeep(description: "Wash Windows", dueDate: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, cycle: Cycle(rule: .months, unit: 1), notes: ["ONLY USE WINDEX", "Wash inside and outside."]),
+        Upkeep(description: "Rotate Boosters", dueDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())!, cycle: Cycle(rule: .months, unit: 6), notes: ["Rotate clockwise"])
     ]
     static var listGarden: [Upkeep] = [
         Upkeep(description: "Water Flowers", dueDate: Date(), cycle: Cycle(rule: .weeks, unit: 1), notes: ["Water East to West"]),

@@ -11,23 +11,22 @@ struct ModifyUpkeepView: View {
     
     @EnvironmentObject var viewManager: ViewManager
     @State var upkeep: Upkeep
-    let submit: () -> Void
+    var isNew: Bool
+    let submit: (Upkeep) -> Void
     
-    let isNew: Bool
-    
-    
-    init(_ upkeep: Upkeep = Upkeep(), submit: @escaping () -> Void) {
-        self._upkeep = State(initialValue: upkeep)
-        self.submit = submit
+    init(_ upkeep: Upkeep = Upkeep(), submit: @escaping (Upkeep) -> Void) {
+        self.upkeep = upkeep
         self.isNew = upkeep.description.isEmpty
+        self.submit = submit
     }
+    
     
     var body: some View {
         VStack(spacing: 25) {
             HStack {
                 Button("Cancel", action: { viewManager.sheet = nil })
                 Spacer()
-                Button(isNew ? "Add" : "Save", action: {})
+                Button(isNew ? "Add" : "Save", action: { submit(upkeep) })
             }
             .foregroundStyle(Color.greenDark)
             .padding(.top)
@@ -106,7 +105,7 @@ struct ModifyUpkeepView: View {
     @State var upkeep = Item.exRocketShip.upkeeps[0]
     return Text("ASDF")
         .sheet(isPresented: .constant(true), content: {
-            ModifyUpkeepView(upkeep) {}
+            ModifyUpkeepView(upkeep) { _ in }
                 .environmentObject(ViewManager())
         })
 }

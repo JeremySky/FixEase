@@ -7,38 +7,6 @@
 
 import SwiftUI
 
-enum ViewSelection {
-    case main, itemDetail(Item)
-}
-
-enum SheetPresenting: Identifiable {
-    case updateItem(Item), updateUpkeep(Upkeep), newItem, newUpkeep
-    
-    var id: String {
-        switch self {
-        case .updateItem:
-            "UpdateItem"
-        case .updateUpkeep:
-            "UpdateUpkeep"
-        case .newItem:
-            "NewItem"
-        case .newUpkeep:
-            "NewUpkeep"
-        }
-    }
-}
-
-class ViewManager: ObservableObject {
-    @Published var current: ViewSelection
-    @Published var sheet: SheetPresenting?
-    @Published var modifyNote: String?
-    
-    init(current: ViewSelection = .main, sheet: SheetPresenting? = nil) {
-        self.current = current
-        self.sheet = sheet
-    }
-}
-
 struct ContentView: View {
     @StateObject var viewManager = ViewManager()
     @State var collection: [Item] = Item.list
@@ -48,32 +16,44 @@ struct ContentView: View {
             switch viewManager.current {
             case .main:
                 MainView($collection)
-            case .itemDetail(let matchingItem):
-                ItemDetailView($collection.first(where: { $0.wrappedValue.id == matchingItem.id })!)
+            case .itemDetail(let item):
+                ItemDetailView($collection.first(where: { $0.wrappedValue.id == item.id })!)
             }
             
             // Custom Sheet for ModifyNoteView...
-            if let modifyNote = viewManager.modifyNote {
-                ModifyNoteView(modifyNote) { _ in }
+            if let note = viewManager.modifyNote {
+                ModifyNoteView(note) { _ in }
             }
         }
         .background(Background().ignoresSafeArea(.keyboard))
         .environmentObject(viewManager)
         .sheet(item: $viewManager.sheet) { sheet in
-            switch sheet {
-            case .updateItem(let item):
-                ModifyItemView(item) { _ in }
-                    .environmentObject(viewManager)
-            case .updateUpkeep(let upkeep):
-                ModifyUpkeepView(upkeep) {}
-                    .environmentObject(viewManager)
-            case .newItem:
-                ModifyItemView() { _ in }
-                    .environmentObject(viewManager)
-            case .newUpkeep:
-                ModifyUpkeepView() {}
-                    .environmentObject(viewManager)
+            ZStack {
+                switch sheet {
+                case .modifyItem(let item):
+                    ModifyItemView(item) { updatedItem in
+                        if item.name.isEmpty {
+                            collection.append(updatedItem)
+                        } else {
+                            let index = collection.firstIndex(where: { $0.id == updatedItem.id })!
+                            collection[index] = updatedItem
+                        }
+                        viewManager.dismiss()
+                    }
+                case .modifyUpkeep(let upkeep, let itemID):
+                    ModifyUpkeepView(upkeep) { updatedUpkeep in
+                        let itemIndex = collection.firstIndex(where: { $0.id == itemID })!
+                        if upkeep.description.isEmpty {
+                            collection[itemIndex].upkeeps.append(updatedUpkeep)
+                        } else {
+                            let upkeepIndex = collection[itemIndex].upkeeps.firstIndex(where: { $0.id == updatedUpkeep.id })!
+                            collection[itemIndex].upkeeps[upkeepIndex] = updatedUpkeep
+                        }
+                        viewManager.dismiss()
+                    }
+                }
             }
+            .environmentObject(viewManager)
         }
     }
 }

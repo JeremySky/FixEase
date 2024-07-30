@@ -36,7 +36,7 @@ struct MainView: View {
         VStack(spacing: 15) {
             HStack {
                 Spacer()
-                Button("New Item") { viewManager.sheet = .newItem }
+                Button("New Item") { viewManager.sheet = .modifyItem(Item()) }
             }
             .foregroundStyle(.white)
             .padding(.horizontal)
@@ -45,8 +45,7 @@ struct MainView: View {
             //MARK: -- Welcome message...
             VStack(alignment: .leading) {
                 Text("Hello, John")
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(.title.weight(.bold))
                 Text("Keep your valuables in prime condition.")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -83,8 +82,7 @@ struct MainView: View {
             //MARK: -- Upkeeps List...
             HStack {
                 Text("Upkeeps")
-                    .font(.largeTitle)
-                    .fontWeight(.heavy)
+                    .font(.largeTitle.weight(.heavy))
                     .foregroundStyle(Color.greenLight)
                 Spacer()
                 Text("\(numCompleted)/\(upkeeps.count) Complete")
@@ -112,8 +110,5 @@ struct MainView: View {
 }
 
 #Preview {
-    @State var collection = Item.list
-    return MainView($collection)
-        .background(ContentView.Background())
-        .environmentObject(ViewManager())
+    ContentView()
 }

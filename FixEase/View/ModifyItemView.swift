@@ -12,35 +12,31 @@ struct ModifyItemView: View {
         case name, description, icon
     }
     @FocusState private var focusedField: FocusedField?
-    
-    
     @EnvironmentObject var viewManager: ViewManager
-    @State var item: Item
-    let submit: (Item) -> Void
-    let title: String
-    let submitActionString: String
-    let addUpkeeps: Bool
     
-    init(_ item: Item = Item(), submit: @escaping (Item) -> Void) {
-        let isNew = item.name.isEmpty
-        self._item = State(initialValue: item)
-        self.title = isNew ? "New Item" : "Modify Item"
-        self.submitActionString = isNew ? "Add" : "Save"
+    @State var item: Item
+    var isNew: Bool
+    let submit: (Item) -> Void
+    
+    init(_ item: Item, submit: @escaping (Item) -> Void) {
+        self.item = item
+        self.isNew = item.name.isEmpty
         self.submit = submit
-        self.addUpkeeps = isNew
     }
+    
     
     var body: some View {
         VStack(spacing: 25) {
             HStack {
-                Button("Cancel", action: { viewManager.sheet = nil })
+                Button("Cancel", action: { viewManager.dismiss() })
                 Spacer()
-                Button(submitActionString, action: { submit(item) })
+                Button(isNew ? "Add" : "Save") {
+                    submit(item)
+                }
             }
             .foregroundStyle(Color.greenDark)
             .padding(.top)
-            
-            Text(title)
+            Text(isNew ? "New Item" : "Modify Item")
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -125,13 +121,12 @@ struct ModifyItemView: View {
         }
         .padding(.horizontal)
         .background(.gray.opacity(0.1))
+        .onTapGesture {
+            focusedField = nil
+        }
     }
 }
 
 #Preview {
-    @State var item = Item.exRocketShip
-    return Text("ASDF")
-        .sheet(isPresented: .constant(true), content: {
-            ModifyItemView(item) { _ in }
-        })
+    ModifyItemView(Item()) { _ in }
 }

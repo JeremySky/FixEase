@@ -36,8 +36,7 @@ struct UpkeepRowView: View {
             HStack {
                 VStack(alignment: .leading) {
                     Text(upkeep.description)
-                        .font(.title3)
-                        .fontWeight(.bold)
+                        .font(.title3.weight(.bold))
                         .foregroundStyle(Color.greenDark)
                     HStack(spacing: 0) {
                         Text("\(upkeep.dueDate, format: .dateTime.weekday()) ")

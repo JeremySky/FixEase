@@ -14,11 +14,6 @@ struct ItemDetailView: View {
     @State var upkeepIndex: Int
     @State var modifyNote: (string: String, isNew: Bool, index: Int?)?
     
-    
-    
-    var leftButtonIsDisabled: Bool { upkeepIndex <= 0 }
-    var rightButtonIsDisabled: Bool { upkeepIndex >= item.upkeeps.count - 1 }
-    
     init(_ item: Binding<Item>, upkeepIndex: Int = 0) {
         self._item = item
         self._upkeepIndex = State(initialValue: upkeepIndex)
@@ -33,14 +28,14 @@ struct ItemDetailView: View {
                     }
                     Spacer()
                     Button("New Upkeep") {
-                        viewManager.sheet = .newUpkeep
+                        viewManager.sheet = .modifyUpkeep(Upkeep(), item.id)
                     }
                 }
                 .padding(.horizontal)
                 .foregroundStyle(.white)
                 
                 //MARK: -- Item Details...
-                Button(action: { viewManager.sheet = .updateItem(item) }) {
+                Button(action: { viewManager.sheet = .modifyItem(item) }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.name)
@@ -74,94 +69,16 @@ struct ItemDetailView: View {
                 }
                 .padding()
                 
-                Spacer().frame(height: 40)
+                Spacer().frame(height: 60)
                 
-                
-                //MARK: -- UpkeepDetailView...
-                //WIP empty view
-                if item.upkeeps.isEmpty {
-                    VStack {
-                        Text("EMPTY")
-                        Spacer()
-                    }
-                } else {
-                    HStack {
-                        Button(action: {
-                            if !leftButtonIsDisabled {
-                                upkeepIndex -= 1
-                            }
-                        },
-                               label: {
-                            Image(systemName: "chevron.left")
-                                .foregroundStyle(Color.gray)
-                                .opacity(leftButtonIsDisabled ? 0.3 : 1)
-                        })
-                        .disabled(leftButtonIsDisabled)
-                        
-                        
-                        //MARK: -- Upkeep Details...
-                        Button(action: { viewManager.sheet = .updateUpkeep(item.upkeeps[upkeepIndex]) }) {
-                            VStack {
-                                Text(item.upkeeps[upkeepIndex].description)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(Color.greenDark)
-                                Text("Every 2 Years")
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.gray)
-                                Text("\(item.upkeeps[upkeepIndex].dueDate, format: .dateTime.weekday(.wide)) \(item.upkeeps[upkeepIndex].dueDate, format: .dateTime.day().month().year())")
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        
-                        
-                        Button(action: {
-                            if !rightButtonIsDisabled {
-                                upkeepIndex += 1
-                            }
-                        },
-                               label: {
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(Color.gray)
-                                .opacity(rightButtonIsDisabled ? 0.3 : 1)
-                        })
-                        .disabled(rightButtonIsDisabled)
-                    }
-                    .padding()
-                    
-                    
-                    //MARK: -- Notes...
-                    VStack(alignment: .leading) {
-                        Text("Notes:")
-                            .bold()
-                            .padding(.horizontal)
-                        List {
-                            ForEach(Array(item.upkeeps[upkeepIndex].notes.enumerated()), id: \.element) { index, note in
-                                Button(note) {
-                                    viewManager.modifyNote = note
-                                }
-                                .foregroundStyle(.primary)
-                                .buttonStyle(.borderless)
-                            }
-                            Button("+ New Note") {
-                                viewManager.modifyNote = ""
-                            }
-                            .foregroundStyle(Color.greenDark)
-                            .buttonStyle(.borderless)
-                        }
-                        .listStyle(.inset)
-                        .scrollIndicators(.hidden)
-                    }
-                    .padding()
+                ZStack {
+                    UpkeepDetailView(forUpkeepIn: item, at: upkeepIndex)
+                    UpkeepIndexStepper($upkeepIndex, for: item)
                 }
             }
         }
     }
 }
-
-
 
 
 

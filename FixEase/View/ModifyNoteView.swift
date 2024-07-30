@@ -11,9 +11,8 @@ struct ModifyNoteView: View {
     @EnvironmentObject var viewManager: ViewManager
     
     @State var note: String
+    var isNew: Bool
     let submit: (String) -> Void
-    
-    let isNew: Bool
     
     init(_ note: String, submit: @escaping (String) -> Void) {
         self.note = note
@@ -25,7 +24,7 @@ struct ModifyNoteView: View {
         ZStack(alignment: .bottom) {
             Color.gray.opacity(0.6)
                 .ignoresSafeArea()
-                .onTapGesture { viewManager.modifyNote = nil }
+                .onTapGesture { viewManager.dismiss() }
             HStack {
                 TextField("", text: $note, prompt: Text(isNew ? "New Note" : "Edit Note").foregroundStyle(.white.opacity(0.6)))
                     .onSubmit {
