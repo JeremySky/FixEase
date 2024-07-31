@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct ModifyNoteView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    enum FocusField: Hashable {
+        case field
+    }
+    @FocusState private var focusedField: FocusField?
     
+    @EnvironmentObject var manager: CollectionManager
     @State var note: String
     var isNew: Bool
     let submit: (String) -> Void
@@ -24,12 +28,12 @@ struct ModifyNoteView: View {
         ZStack(alignment: .bottom) {
             Color.gray.opacity(0.6)
                 .ignoresSafeArea()
-                .onTapGesture { viewManager.dismiss() }
+                .onTapGesture { manager.dismiss() }
             HStack {
                 TextField("", text: $note, prompt: Text(isNew ? "New Note" : "Edit Note").foregroundStyle(.white.opacity(0.6)))
-                    .onSubmit {
-                        submit(note)
-                    }
+                    .onSubmit { submit(note) }
+                    .focused($focusedField,equals: .field)
+                    .task { self.focusedField = .field }
                 Button(action: { note = "" }) {
                     Image(systemName: "x.square")
                         .font(.title2)
@@ -39,14 +43,14 @@ struct ModifyNoteView: View {
             }
             .padding()
             .foregroundStyle(.white)
-            .background(
-                Color.black.opacity(0.7)
-            )
+            .background( Color.black.opacity(0.7) )
         }
     }
 }
 
 #Preview {
-    ContentView(viewManager: ViewManager(current: .itemDetail(Item.exRocketShip)))
-        .background(ContentView.Background())
+    ZStack {
+        ContentView()
+        ModifyNoteView("Wash it") { _ in }
+    }
 }

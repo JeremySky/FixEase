@@ -9,18 +9,16 @@ import SwiftUI
 
 struct UpkeepDetailView: View {
     
-    @EnvironmentObject var viewManager: ViewManager
+    @EnvironmentObject var manager: CollectionManager
     var upkeep: Upkeep
-    let itemID: UUID
     
-    init(forUpkeepIn item: Item, at index: Int) {
-        self.upkeep = item.upkeeps[index]
-        self.itemID = item.id
+    init(_ upkeep: Upkeep) {
+        self.upkeep = upkeep
     }
     
     var body: some View {
         VStack(spacing: 40) {
-            Button(action: { viewManager.sheet = .modifyUpkeep(upkeep, itemID)}) {
+            Button(action: { manager.modifyUpkeepSheet() }) {
                 VStack {
                     Text(upkeep.description)
                         .font(.title2.weight(.bold))
@@ -39,18 +37,14 @@ struct UpkeepDetailView: View {
                     .bold()
                     .padding(.horizontal)
                 List {
-                    ForEach(upkeep.notes, id: \.self) { note in
-                        Button(note) {
-                            viewManager.modifyNote = note
-                        }
-                        .foregroundStyle(.primary)
+                    ForEach(Array(upkeep.notes.enumerated()), id: \.offset) { offset, note in
+                        Button(note) { manager.modifyNoteSheet(note, atIndex: offset) }
+                            .foregroundStyle(.primary)
+                            .buttonStyle(.borderless)
+                    }
+                    Button("+ New Note") { manager.newNoteSheet() }
+                        .foregroundStyle(Color.greenDark)
                         .buttonStyle(.borderless)
-                    }
-                    Button("+ New Note") {
-                        viewManager.modifyNote = ""
-                    }
-                    .foregroundStyle(Color.greenDark)
-                    .buttonStyle(.borderless)
                 }
                 .listStyle(.inset)
                 .scrollIndicators(.hidden)
@@ -61,5 +55,8 @@ struct UpkeepDetailView: View {
 }
 
 #Preview {
-    UpkeepDetailView(forUpkeepIn: Item.exRocketShip, at: 0)
+    @State var manager = CollectionManager.preview
+    return ItemDetailView($manager.collection[0])
+        .background(Background())
+        .environmentObject(manager)
 }

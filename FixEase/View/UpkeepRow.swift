@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct UpkeepRowView: View {
+struct UpkeepRow: View {
     
     let upkeep: Upkeep
     @State var isCompleted = false
@@ -74,6 +74,6 @@ struct UpkeepRowView: View {
 }
 
 #Preview {
-    UpkeepRowView(Upkeep.listRocketShip[0]) {}
+    UpkeepRow(Upkeep.listRocketShip[0]) {}
         .padding()
 }

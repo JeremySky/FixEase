@@ -12,13 +12,13 @@ struct ModifyItemView: View {
         case name, description, icon
     }
     @FocusState private var focusedField: FocusedField?
-    @EnvironmentObject var viewManager: ViewManager
+    @EnvironmentObject var manager: CollectionManager
     
     @State var item: Item
     var isNew: Bool
     let submit: (Item) -> Void
     
-    init(_ item: Item, submit: @escaping (Item) -> Void) {
+    init(_ item: Item = Item(), submit: @escaping (Item) -> Void) {
         self.item = item
         self.isNew = item.name.isEmpty
         self.submit = submit
@@ -28,7 +28,7 @@ struct ModifyItemView: View {
     var body: some View {
         VStack(spacing: 25) {
             HStack {
-                Button("Cancel", action: { viewManager.dismiss() })
+                Button("Cancel", action: { manager.dismiss() })
                 Spacer()
                 Button(isNew ? "Add" : "Save") {
                     submit(item)
@@ -129,4 +129,5 @@ struct ModifyItemView: View {
 
 #Preview {
     ModifyItemView(Item()) { _ in }
+        .environmentObject(CollectionManager(collection: Item.list))
 }

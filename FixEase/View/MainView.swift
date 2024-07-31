@@ -9,13 +9,12 @@ import SwiftUI
 
 struct MainView: View {
     
-    @EnvironmentObject var viewManager: ViewManager
-    @Binding var collection: [Item]
+    @EnvironmentObject var manager: CollectionManager
     @State var numCompleted: Int = 0
     
     var upkeeps: [Upkeep] {
         var list = [Upkeep]()
-        for item in collection {
+        for item in manager.collection {
             for upkeep in item.upkeeps {
                 var updatedUpkeep = upkeep
                 updatedUpkeep.emoji = item.emoji
@@ -28,15 +27,11 @@ struct MainView: View {
         return list
     }
     
-    init(_ collection: Binding<[Item]>) {
-        self._collection = collection
-    }
-    
     var body: some View {
         VStack(spacing: 15) {
             HStack {
                 Spacer()
-                Button("New Item") { viewManager.sheet = .modifyItem(Item()) }
+                Button("New Item") { manager.newItemSheet() }
             }
             .foregroundStyle(.white)
             .padding(.horizontal)
@@ -58,10 +53,8 @@ struct MainView: View {
             //MARK: -- Items List View...
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 17) {
-                    ForEach(collection, id: \.self) { item in
-                        Button {
-                            viewManager.current = .itemDetail(item)
-                        } label: {
+                    ForEach(Array(manager.collection)) { item in
+                        Button { manager.select(item: item) } label: {
                             ZStack {
                                 Circle()
                                     .frame(width: 78)
@@ -70,8 +63,7 @@ struct MainView: View {
                                 Text(item.emoji)
                                     .font(.custom("Item Button", fixedSize: 45))
                             }
-                        }
-                        
+                        } 
                     }
                 }
                 .padding()
@@ -95,16 +87,16 @@ struct MainView: View {
             ScrollView {
                 VStack(spacing: 30) {
                     ForEach(upkeeps, id: \.self) { upkeep in
-                        UpkeepRowView(upkeep) {
+                        UpkeepRow(upkeep) {
                             numCompleted += 1
                         }
                     }
                 }
                 .padding()
             }
-            
-            
-            
+        }
+        .sheet(item: $manager.modifyItem) { newItem in
+            ModifyItemView(submit: { manager.add(item: $0) })
         }
     }
 }

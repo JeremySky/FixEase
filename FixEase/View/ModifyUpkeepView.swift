@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ModifyUpkeepView: View {
     
-    @EnvironmentObject var viewManager: ViewManager
+    @EnvironmentObject var manager: CollectionManager
     @State var upkeep: Upkeep
     var isNew: Bool
     let submit: (Upkeep) -> Void
@@ -24,7 +24,7 @@ struct ModifyUpkeepView: View {
     var body: some View {
         VStack(spacing: 25) {
             HStack {
-                Button("Cancel", action: { viewManager.sheet = nil })
+                Button("Cancel", action: { manager.dismiss() })
                 Spacer()
                 Button(isNew ? "Add" : "Save", action: { submit(upkeep) })
             }
@@ -106,6 +106,6 @@ struct ModifyUpkeepView: View {
     return Text("ASDF")
         .sheet(isPresented: .constant(true), content: {
             ModifyUpkeepView(upkeep) { _ in }
-                .environmentObject(ViewManager())
+                .environmentObject(CollectionManager(collection: Item.list))
         })
 }

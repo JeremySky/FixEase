@@ -9,33 +9,27 @@ import SwiftUI
 
 struct ItemDetailView: View {
     
-    @EnvironmentObject var viewManager: ViewManager
+    @EnvironmentObject var manager: CollectionManager
     @Binding var item: Item
-    @State var upkeepIndex: Int
-    @State var modifyNote: (string: String, isNew: Bool, index: Int?)?
+    @State var upkeepIndex: Int = 0
     
-    init(_ item: Binding<Item>, upkeepIndex: Int = 0) {
+    init(_ item: Binding<Item>) {
         self._item = item
-        self._upkeepIndex = State(initialValue: upkeepIndex)
     }
     
     var body: some View {
         ZStack {
             VStack {
                 HStack {
-                    Button("Back") {
-                        viewManager.current = .main
-                    }
+                    Button("Back") { manager.selectedItem = nil }
                     Spacer()
-                    Button("New Upkeep") {
-                        viewManager.sheet = .modifyUpkeep(Upkeep(), item.id)
-                    }
+                    Button("New Upkeep") { manager.modifyUpkeep = Upkeep() }
                 }
                 .padding(.horizontal)
                 .foregroundStyle(.white)
                 
                 //MARK: -- Item Details...
-                Button(action: { viewManager.sheet = .modifyItem(item) }) {
+                Button(action: { manager.modifyItemSheet(item) }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.name)
@@ -72,10 +66,34 @@ struct ItemDetailView: View {
                 Spacer().frame(height: 60)
                 
                 ZStack {
-                    UpkeepDetailView(forUpkeepIn: item, at: upkeepIndex)
-                    UpkeepIndexStepper($upkeepIndex, for: item)
+                    if !item.upkeeps.isEmpty {
+                        UpkeepDetailView(item.upkeeps[upkeepIndex])
+                        UpkeepIndexStepper($upkeepIndex, for: item)
+                            .onChange(of: upkeepIndex) { _, newValue in
+                                manager.select(upkeepAtIndex: newValue)
+                            }
+                    } else {
+                        VStack {
+                            Text("EMPTY")
+                            Spacer()
+                        }
+                    }
                 }
             }
+            
+            
+            //MARK: -- Custom Sheet for ModifyNoteView...
+            if let originalNote = manager.selectedNote?.value {
+                ModifyNoteView(originalNote) { updatedNote in
+                    originalNote.isEmpty ? manager.add(note: updatedNote) : manager.update(note: updatedNote)
+                }
+            }
+        }
+        .sheet(item: $manager.modifyUpkeep) { newUpkeep in
+            ModifyUpkeepView(submit: { manager.add(upkeep: $0) })
+        }
+        .sheet(item: $manager.modifyItem) { itemToModify in
+            ModifyItemView(itemToModify, submit: { manager.update(item: $0) })
         }
     }
 }
@@ -83,6 +101,5 @@ struct ItemDetailView: View {
 
 
 #Preview {
-    ContentView(viewManager: ViewManager(current: .itemDetail(Item.exRocketShip)))
-        .background(ContentView.Background())
+    ContentView(collectionManager: CollectionManager.preview)
 }

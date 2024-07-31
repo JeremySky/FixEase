@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Upkeep: Hashable {
+struct Upkeep: Hashable, Identifiable {
     var id: UUID
     var description: String
     var dueDate: Date
