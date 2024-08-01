@@ -14,6 +14,8 @@ struct Item: Hashable, Identifiable {
     var emoji: String
     var upkeeps: [Upkeep]
     
+    var isEmpty: Bool { self.name.isEmpty }
+    
     init(id: UUID = UUID(), name: String = "", description: String = "", emoji: String = "", upkeeps: [Upkeep] = []) {
         self.id = id
         self.name = name

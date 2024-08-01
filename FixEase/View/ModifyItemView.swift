@@ -20,7 +20,7 @@ struct ModifyItemView: View {
     
     init(_ item: Item = Item(), submit: @escaping (Item) -> Void) {
         self.item = item
-        self.isNew = item.name.isEmpty
+        self.isNew = item.isEmpty
         self.submit = submit
     }
     

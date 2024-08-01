@@ -13,9 +13,11 @@ struct Upkeep: Hashable, Identifiable {
     var dueDate: Date
     var cycle: Cycle
     var emoji: String?
-    var notes: [String]
+    var notes: [Note]
     
-    init(id: UUID = UUID(), description: String = "", dueDate: Date = Date(), cycle: Cycle = Cycle(rule: .weeks, unit: 1), emoji: String? = nil, notes: [String] = []) {
+    var isEmpty: Bool { self.description.isEmpty }
+    
+    init(id: UUID = UUID(), description: String = "", dueDate: Date = Date(), cycle: Cycle = Cycle(rule: .weeks, unit: 1), emoji: String? = nil, notes: [Note] = []) {
         self.id = id
         self.description = description
         self.dueDate = dueDate
@@ -70,17 +72,17 @@ extension Upkeep {
 
 extension Upkeep {
     static var listRocketShip: [Upkeep] = [
-        Upkeep(description: "Add Rocket Fuel", dueDate: Date(), cycle: Cycle(rule: .years, unit: 2), notes: ["Use S+ tier only.", "Never top off."]),
-        Upkeep(description: "Wash Windows", dueDate: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, cycle: Cycle(rule: .months, unit: 1), notes: ["ONLY USE WINDEX", "Wash inside and outside."]),
-        Upkeep(description: "Rotate Boosters", dueDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())!, cycle: Cycle(rule: .months, unit: 6), notes: ["Rotate clockwise"])
+        Upkeep(description: "Add Rocket Fuel", dueDate: Date(), cycle: Cycle(rule: .years, unit: 2), notes: Note.listRocketShip1),
+        Upkeep(description: "Wash Windows", dueDate: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, cycle: Cycle(rule: .months, unit: 1), notes: Note.listRocketShip2),
+        Upkeep(description: "Rotate Boosters", dueDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())!, cycle: Cycle(rule: .months, unit: 6), notes: Note.listRocketShip3)
     ]
     static var listGarden: [Upkeep] = [
-        Upkeep(description: "Water Flowers", dueDate: Date(), cycle: Cycle(rule: .weeks, unit: 1), notes: ["Water East to West"]),
+        Upkeep(description: "Water Flowers", dueDate: Date(), cycle: Cycle(rule: .weeks, unit: 1), notes: Note.listGarden1),
         Upkeep(description: "Add Fertilizer", dueDate: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, cycle: Cycle(rule: .weeks, unit: 2)),
         Upkeep(description: "Check for Bugs", dueDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())!, cycle: Cycle(rule: .days, unit: 2))
     ]
     static var listCoffeeMaker: [Upkeep] = [
-        Upkeep(description: "Change Filter", dueDate: Date(), cycle: Cycle(rule: .months, unit: 3), notes: ["If molding, light whole thing of fire."]),
+        Upkeep(description: "Change Filter", dueDate: Date(), cycle: Cycle(rule: .months, unit: 3), notes: Note.listCoffeeMaker1),
         Upkeep(description: "Run Cleaning Pod", dueDate: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, cycle: Cycle(rule: .months, unit: 3)),
         Upkeep(description: "Clean Tank", dueDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())!, cycle: Cycle(rule: .months, unit: 1))
     ]

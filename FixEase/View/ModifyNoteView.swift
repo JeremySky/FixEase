@@ -14,11 +14,11 @@ struct ModifyNoteView: View {
     @FocusState private var focusedField: FocusField?
     
     @EnvironmentObject var manager: CollectionManager
-    @State var note: String
+    @State var note: Note
     var isNew: Bool
-    let submit: (String) -> Void
+    let submit: (Note) -> Void
     
-    init(_ note: String, submit: @escaping (String) -> Void) {
+    init(_ note: Note, submit: @escaping (Note) -> Void) {
         self.note = note
         self.isNew = note.isEmpty
         self.submit = submit
@@ -30,11 +30,11 @@ struct ModifyNoteView: View {
                 .ignoresSafeArea()
                 .onTapGesture { manager.dismiss() }
             HStack {
-                TextField("", text: $note, prompt: Text(isNew ? "New Note" : "Edit Note").foregroundStyle(.white.opacity(0.6)))
+                TextField("", text: $note.string, prompt: Text(isNew ? "New Note" : "Edit Note").foregroundStyle(.white.opacity(0.6)))
                     .onSubmit { submit(note) }
                     .focused($focusedField,equals: .field)
                     .task { self.focusedField = .field }
-                Button(action: { note = "" }) {
+                Button(action: { note.string = "" }) {
                     Image(systemName: "x.square")
                         .font(.title2)
                         .opacity(note.isEmpty ? 0.6 : 1)
@@ -51,6 +51,6 @@ struct ModifyNoteView: View {
 #Preview {
     ZStack {
         ContentView()
-        ModifyNoteView("Wash it") { _ in }
+        ModifyNoteView(Note("Wash it")) { _ in }
     }
 }

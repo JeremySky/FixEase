@@ -11,11 +11,11 @@ class CollectionManager: NSObject, ObservableObject {
     @Published var collection: [Item]
     @Published var selectedItem: (value: Item, index: Int)?
     @Published var selectedUpkeep: (value: Upkeep, index: Int)?
-    @Published var selectedNote: (value: String, index: Int?)?
+    @Published var selectedNote: (value: Note, index: Int?)?
     @Published var modifyItem: Item?
     @Published var modifyUpkeep: Upkeep?
     
-    init(collection: [Item], selectedItem: (value: Item, index: Int)? = nil, selectedUpkeep: (value: Upkeep, index: Int)? = nil, selectedNote: (value: String, index: Int)? = nil, modifyItem: Item? = nil, modifyUpkeep: Upkeep? = nil) {
+    init(collection: [Item], selectedItem: (value: Item, index: Int)? = nil, selectedUpkeep: (value: Upkeep, index: Int)? = nil, selectedNote: (value: Note, index: Int)? = nil, modifyItem: Item? = nil, modifyUpkeep: Upkeep? = nil) {
         self.collection = collection
         self.selectedItem = selectedItem
         self.selectedUpkeep = selectedUpkeep
@@ -24,6 +24,8 @@ class CollectionManager: NSObject, ObservableObject {
         self.modifyUpkeep = modifyUpkeep
     }
     
+    
+    //MARK: -- Sheet functions
     func dismiss() {
         self.modifyItem = nil
         self.modifyUpkeep = nil
@@ -39,120 +41,77 @@ class CollectionManager: NSObject, ObservableObject {
     }
     
     func newNoteSheet() {
-        self.selectedNote = (value: "", index: nil)
+        self.selectedNote = (value: Note(), index: nil)
     }
     
-    func modifyItemSheet(_ item: Item) {
+    func modifyItemSheet() {
+        let item = self.selectedItem!.value
         self.modifyItem = item
     }
     
-    func modifyUpkeepSheet(_ upkeep: Upkeep) {
+    func modifyUpkeepSheet() {
+        let upkeep = self.selectedUpkeep!.value
         self.modifyUpkeep = upkeep
     }
     
-    func modifyNoteSheet(_ note: String, atIndex index: Int) {
+    func modifyNoteSheet(_ note: Note, atIndex index: Int) {
         self.selectedNote = (value: note, index: index)
     }
     
+    
+    //MARK: -- submit actions...
     func update(item: Item) {
-        print(object: self, function: .updateItem)
-        guard let itemIndex = selectedItem?.index else {
-            printFailure(.noItemSelected)
-            return
-        }
+        let itemIndex = selectedItem!.index
         self.collection[itemIndex] = item
         dismiss()
-        printSuccess()
     }
     
     func update(upkeep: Upkeep) {
-        print(object: self, function: .updateUpkeep)
-        guard let itemIndex = selectedItem?.index else {
-            printFailure(.noItemSelected)
-            return
-        }
-        guard let upkeepIndex = selectedUpkeep?.index else {
-            printFailure(.noUpkeepSelected)
-            return
-        }
+        let itemIndex = selectedItem!.index
+        let upkeepIndex = selectedUpkeep!.index
         self.collection[itemIndex].upkeeps[upkeepIndex] = upkeep
         dismiss()
-        printSuccess()
     }
     
-    func update(note: String) {
-        print(object: self, function: .updateNote)
-        guard let itemIndex = selectedItem?.index else {
-            printFailure(.noItemSelected)
-            return
-        }
-        guard let upkeepIndex = selectedUpkeep?.index else {
-            printFailure(.noUpkeepSelected)
-            return
-        }
-        guard let noteIndex = selectedNote?.index else {
-            printFailure(.noNoteSelected)
-            return
-        }
+    func update(note: Note) {
+        let itemIndex = selectedItem!.index
+        let upkeepIndex = selectedUpkeep!.index
+        let noteIndex = selectedNote!.index!
         self.collection[itemIndex].upkeeps[upkeepIndex].notes[noteIndex] = note
         dismiss()
-        printSuccess()
     }
     
     func add(item: Item) {
-        print(object: self, function: .addItem)
-        collection.append(item)
+        self.collection.append(item)
         dismiss()
-        printSuccess()
     }
     
     func add(upkeep: Upkeep) {
-        print(object: self, function: .addUpkeep)
-        guard let itemIndex = selectedItem?.index else {
-            printFailure(.noItemSelected)
-            return
-        }
-        collection[itemIndex].upkeeps.append(upkeep)
+        let itemIndex = selectedItem!.index
+        self.collection[itemIndex].upkeeps.append(upkeep)
         dismiss()
-        printSuccess()
     }
     
-    func add(note: String) {
-        print(object: self, function: .addNote)
-        guard let itemIndex = selectedItem?.index else {
-            printFailure(.noItemSelected)
-            return
-        }
-        guard let upkeepIndex = selectedUpkeep?.index else {
-            printFailure(.noUpkeepSelected)
-            return
-        }
-        collection[itemIndex].upkeeps[upkeepIndex].notes.append(note)
+    func add(note: Note) {
+        let itemIndex = selectedItem!.index
+        let upkeepIndex = selectedUpkeep!.index
+        self.collection[itemIndex].upkeeps[upkeepIndex].notes.append(note)
         dismiss()
-        printSuccess()
     }
     
+    
+    //MARK: -- Select Component...
     func select(item: Item) {
-        print(object: self, function: .selectItem)
-        guard let index = collection.firstIndex(where: {$0.id == item.id}) else {
-            printFailure(.itemNotInCollection)
-            return
-        }
+        let index = collection.firstIndex(where: {$0.id == item.id})!
         self.selectedItem = (value: item, index: index)
         if !collection[index].upkeeps.isEmpty {
             self.select(upkeepAtIndex: 0)
         }
-        printSuccess()
     }
     
     func select(upkeepAtIndex index: Int) {
-        print(object: self, function: .selectUpkeep)
-        guard let itemIndex = selectedItem?.index else {
-            printFailure(.noItemSelected)
-            return
-        }
+        let itemIndex = selectedItem!.index
         self.selectedUpkeep = (value: collection[itemIndex].upkeeps[index], index: index)
-        printSuccess()
     }
 }
 

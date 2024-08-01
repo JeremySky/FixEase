@@ -10,7 +10,6 @@
 		6238AC2F2C585F8900F75B50 /* ModifyNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */; };
 		6238AC382C58965D00F75B50 /* UpkeepDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC372C58965D00F75B50 /* UpkeepDetailView.swift */; };
 		6238AC3A2C589D3000F75B50 /* UpkeepIndexStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC392C589D3000F75B50 /* UpkeepIndexStepper.swift */; };
-		6238AC3E2C59A2B900F75B50 /* Print&Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC3D2C59A2B900F75B50 /* Print&Errors.swift */; };
 		6238AC402C59A70D00F75B50 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC3F2C59A70D00F75B50 /* Background.swift */; };
 		6238AC422C59A72B00F75B50 /* CollectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC412C59A72B00F75B50 /* CollectionManager.swift */; };
 		62802D3C2C46E4ED00234DE4 /* FixEaseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */; };
@@ -25,13 +24,13 @@
 		62813A2C2C4B2B70001C9EF2 /* Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A2B2C4B2B70001C9EF2 /* Emoji.swift */; };
 		62813A302C4F3E0D001C9EF2 /* ModifyItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A2F2C4F3E0D001C9EF2 /* ModifyItemView.swift */; };
 		62813A322C501C6C001C9EF2 /* ModifyUpkeepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62813A312C501C6C001C9EF2 /* ModifyUpkeepView.swift */; };
+		62A8CFB32C5AF8C8002627E4 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A8CFB22C5AF8C8002627E4 /* Note.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyNoteView.swift; sourceTree = "<group>"; };
 		6238AC372C58965D00F75B50 /* UpkeepDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpkeepDetailView.swift; sourceTree = "<group>"; };
 		6238AC392C589D3000F75B50 /* UpkeepIndexStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpkeepIndexStepper.swift; sourceTree = "<group>"; };
-		6238AC3D2C59A2B900F75B50 /* Print&Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Print&Errors.swift"; sourceTree = "<group>"; };
 		6238AC3F2C59A70D00F75B50 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		6238AC412C59A72B00F75B50 /* CollectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManager.swift; sourceTree = "<group>"; };
 		62802D382C46E4ED00234DE4 /* FixEase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FixEase.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -47,6 +46,7 @@
 		62813A2B2C4B2B70001C9EF2 /* Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
 		62813A2F2C4F3E0D001C9EF2 /* ModifyItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyItemView.swift; sourceTree = "<group>"; };
 		62813A312C501C6C001C9EF2 /* ModifyUpkeepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyUpkeepView.swift; sourceTree = "<group>"; };
+		62A8CFB22C5AF8C8002627E4 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +88,6 @@
 			isa = PBXGroup;
 			children = (
 				62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */,
-				6238AC3D2C59A2B900F75B50 /* Print&Errors.swift */,
 				62813A2D2C4EF98B001C9EF2 /* View */,
 				6238AC3B2C59924300F75B50 /* Manager */,
 				62813A2E2C4EF9AB001C9EF2 /* Model */,
@@ -128,6 +127,7 @@
 			children = (
 				62813A252C4B2740001C9EF2 /* Upkeep.swift */,
 				62813A292C4B2A84001C9EF2 /* Item.swift */,
+				62A8CFB22C5AF8C8002627E4 /* Note.swift */,
 				62813A2B2C4B2B70001C9EF2 /* Emoji.swift */,
 			);
 			path = Model;
@@ -207,9 +207,9 @@
 				62813A242C49DA22001C9EF2 /* ItemDetailView.swift in Sources */,
 				6238AC422C59A72B00F75B50 /* CollectionManager.swift in Sources */,
 				62802D3E2C46E4ED00234DE4 /* ContentView.swift in Sources */,
+				62A8CFB32C5AF8C8002627E4 /* Note.swift in Sources */,
 				62813A2C2C4B2B70001C9EF2 /* Emoji.swift in Sources */,
 				62802D4A2C488DAD00234DE4 /* MainView.swift in Sources */,
-				6238AC3E2C59A2B900F75B50 /* Print&Errors.swift in Sources */,
 				62813A262C4B2740001C9EF2 /* Upkeep.swift in Sources */,
 				62813A302C4F3E0D001C9EF2 /* ModifyItemView.swift in Sources */,
 				6238AC3A2C589D3000F75B50 /* UpkeepIndexStepper.swift in Sources */,

@@ -29,7 +29,7 @@ struct ItemDetailView: View {
                 .foregroundStyle(.white)
                 
                 //MARK: -- Item Details...
-                Button(action: { manager.modifyItemSheet(item) }) {
+                Button(action: { manager.modifyItemSheet() }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.name)
@@ -89,8 +89,8 @@ struct ItemDetailView: View {
                 }
             }
         }
-        .sheet(item: $manager.modifyUpkeep) { newUpkeep in
-            ModifyUpkeepView(submit: { manager.add(upkeep: $0) })
+        .sheet(item: $manager.modifyUpkeep) { upkeep in
+            ModifyUpkeepView(upkeep, submit: { upkeep.isEmpty ? manager.add(upkeep: $0) : manager.update(upkeep: $0) })
         }
         .sheet(item: $manager.modifyItem) { itemToModify in
             ModifyItemView(itemToModify, submit: { manager.update(item: $0) })

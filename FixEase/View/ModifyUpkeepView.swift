@@ -16,7 +16,7 @@ struct ModifyUpkeepView: View {
     
     init(_ upkeep: Upkeep = Upkeep(), submit: @escaping (Upkeep) -> Void) {
         self.upkeep = upkeep
-        self.isNew = upkeep.description.isEmpty
+        self.isNew = upkeep.isEmpty
         self.submit = submit
     }
     

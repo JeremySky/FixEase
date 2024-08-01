@@ -38,7 +38,7 @@ struct UpkeepDetailView: View {
                     .padding(.horizontal)
                 List {
                     ForEach(Array(upkeep.notes.enumerated()), id: \.offset) { offset, note in
-                        Button(note) { manager.modifyNoteSheet(note, atIndex: offset) }
+                        Button(note.string) { manager.modifyNoteSheet(note, atIndex: offset) }
                             .foregroundStyle(.primary)
                             .buttonStyle(.borderless)
                     }
@@ -57,6 +57,5 @@ struct UpkeepDetailView: View {
 #Preview {
     @State var manager = CollectionManager.preview
     return ItemDetailView($manager.collection[0])
-        .background(Background())
         .environmentObject(manager)
 }

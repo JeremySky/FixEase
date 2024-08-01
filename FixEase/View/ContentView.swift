@@ -12,7 +12,8 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             if let item = collectionManager.selectedItem?.value {
-                ItemDetailView($collectionManager.collection.first(where: { $0.wrappedValue.id == item.id })!)
+                let index = collectionManager.collection.firstIndex(where: { $0.id == item.id })!
+                ItemDetailView($collectionManager.collection[index])
             } else {
                 MainView()
             }
