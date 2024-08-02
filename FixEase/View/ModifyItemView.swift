@@ -12,7 +12,7 @@ struct ModifyItemView: View {
         case name, description, icon
     }
     @FocusState private var focusedField: FocusedField?
-    @EnvironmentObject var manager: CollectionManager
+    @Environment(\.dismiss) private var dismiss
     
     @State var item: Item
     var isNew: Bool
@@ -28,10 +28,11 @@ struct ModifyItemView: View {
     var body: some View {
         VStack(spacing: 25) {
             HStack {
-                Button("Cancel", action: { manager.dismiss() })
+                Button("Cancel", action: { dismiss() })
                 Spacer()
                 Button(isNew ? "Add" : "Save") {
                     submit(item)
+                    dismiss()
                 }
             }
             .foregroundStyle(Color.greenDark)
@@ -49,6 +50,9 @@ struct ModifyItemView: View {
                     TextField("i.e. Car", text: $item.name)
                         .textFieldStyle(.roundedBorder)
                         .focused($focusedField, equals: .name)
+                        .onSubmit {
+                            focusedField = .description
+                        }
                     if focusedField == .name {
                         Button(role: .destructive, action: { item.name = "" }) {
                             Image(systemName: "x.square")
@@ -68,6 +72,9 @@ struct ModifyItemView: View {
                     TextField("i.e. 2018 Nissan", text: $item.description)
                         .textFieldStyle(.roundedBorder)
                         .focused($focusedField, equals: .description)
+                        .onSubmit {
+                            focusedField = .icon
+                        }
                     if focusedField == .description {
                         Button(role: .destructive, action: { item.description = "" }) {
                             Image(systemName: "x.square")
@@ -91,6 +98,9 @@ struct ModifyItemView: View {
                                 item.emoji = newValue.onlyEmoji()
                             }
                             .focused($focusedField, equals: .icon)
+                            .onSubmit {
+                                focusedField = nil
+                            }
                     }
                     .padding(.horizontal, 8)
                     if focusedField == nil {
@@ -128,6 +138,9 @@ struct ModifyItemView: View {
 }
 
 #Preview {
-    ModifyItemView(Item()) { _ in }
-        .environmentObject(CollectionManager(collection: Item.list))
+    @State var isPresenting: Bool = true
+    return Text("ASDF")
+        .sheet(isPresented: $isPresenting, content: {
+            ModifyItemView(Item()) { _ in }
+        })
 }

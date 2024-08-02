@@ -6,20 +6,49 @@
 //
 import SwiftUI
 
+extension Binding where Value == Bool {
+    init<T>(value: Binding<Optional<T>>) {
+        self.init {
+            value.wrappedValue != nil
+        } set: { newValue in
+            if !newValue { value.wrappedValue = nil}
+        }
+    }
+}
+
 struct ContentView: View {
-    @StateObject var collectionManager = CollectionManager(collection: Item.list)
+    
+    @State var collection = Item.list
+    @State var selectedItemID: UUID?
     
     var body: some View {
         ZStack {
-            if let item = collectionManager.selectedItem?.value {
-                let index = collectionManager.collection.firstIndex(where: { $0.id == item.id })!
-                ItemDetailView($collectionManager.collection[index])
+            if let i = collection.firstIndex(where: {$0.id == selectedItemID}) {
+                ItemDetailView($collection[i], id: Binding(value: $selectedItemID))
             } else {
-                MainView()
+                MainView(collection: $collection) { selectItem($0) }
             }
         }
-        .environmentObject(collectionManager)
-        .background(Background().ignoresSafeArea(.keyboard))
+        .background(getBackground())
+    }
+    
+    
+    func selectItem(_ item: Item) {
+        self.selectedItemID = item.id
+    }
+    func getBackground() -> some View {
+        GeometryReader { geometry in
+            VStack {
+                Ellipse()
+                    .frame(width: 550, height: 350)
+                    .foregroundStyle(Gradient(colors: [Color.greenLight, Color.greenDark]))
+                    .rotationEffect(.degrees(-7))
+                Spacer()
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .offset(y: -geometry.size.height/6.3)
+        }
+        .ignoresSafeArea(.keyboard)
     }
 }
 

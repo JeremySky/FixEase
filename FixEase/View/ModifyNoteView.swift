@@ -13,25 +13,30 @@ struct ModifyNoteView: View {
     }
     @FocusState private var focusedField: FocusField?
     
-    @EnvironmentObject var manager: CollectionManager
     @State var note: Note
-    var isNew: Bool
+    @Binding var sheetIsPresented: Sheet?
     let submit: (Note) -> Void
     
-    init(_ note: Note, submit: @escaping (Note) -> Void) {
-        self.note = note
-        self.isNew = note.isEmpty
+    var isNew: Bool
+    
+    init(_ note: Note?, _ sheetIsPresented: Binding<Sheet?>, submit: @escaping (Note) -> Void) {
+        self.note = (note != nil) ? note! : Note()
+        self._sheetIsPresented = sheetIsPresented
         self.submit = submit
+        self.isNew = note == nil
     }
     
     var body: some View {
         ZStack(alignment: .bottom) {
             Color.gray.opacity(0.6)
                 .ignoresSafeArea()
-                .onTapGesture { manager.dismiss() }
+                .onTapGesture { sheetIsPresented = nil }
             HStack {
                 TextField("", text: $note.string, prompt: Text(isNew ? "New Note" : "Edit Note").foregroundStyle(.white.opacity(0.6)))
-                    .onSubmit { submit(note) }
+                    .onSubmit {
+                        submit(note)
+                        sheetIsPresented = nil
+                    }
                     .focused($focusedField,equals: .field)
                     .task { self.focusedField = .field }
                 Button(action: { note.string = "" }) {
@@ -49,8 +54,9 @@ struct ModifyNoteView: View {
 }
 
 #Preview {
-    ZStack {
+    @State var sheetIsPresented: Sheet? = .newNote
+    return ZStack {
         ContentView()
-        ModifyNoteView(Note("Wash it")) { _ in }
+        ModifyNoteView(Note("Wash it"), $sheetIsPresented) { _ in }
     }
 }

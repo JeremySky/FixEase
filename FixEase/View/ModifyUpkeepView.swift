@@ -8,25 +8,30 @@
 import SwiftUI
 
 struct ModifyUpkeepView: View {
+    @FocusState private var isFocused: Bool
+    @Environment(\.dismiss) private var dismiss
     
-    @EnvironmentObject var manager: CollectionManager
     @State var upkeep: Upkeep
-    var isNew: Bool
     let submit: (Upkeep) -> Void
+    
+    var isNew: Bool
     
     init(_ upkeep: Upkeep = Upkeep(), submit: @escaping (Upkeep) -> Void) {
         self.upkeep = upkeep
-        self.isNew = upkeep.isEmpty
         self.submit = submit
+        self.isNew = upkeep.isEmpty
     }
     
     
     var body: some View {
         VStack(spacing: 25) {
             HStack {
-                Button("Cancel", action: { manager.dismiss() })
+                Button("Cancel", action: { dismiss() })
                 Spacer()
-                Button(isNew ? "Add" : "Save", action: { submit(upkeep) })
+                Button(isNew ? "Add" : "Save") {
+                    submit(upkeep)
+                    dismiss()
+                }
             }
             .foregroundStyle(Color.greenDark)
             .padding(.top)
@@ -42,12 +47,18 @@ struct ModifyUpkeepView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 HStack {
                     TextField("i.e. Car Wash", text: $upkeep.description)
+                        .focused($isFocused)
+                        .onSubmit {
+                            isFocused = false
+                        }
                         .textFieldStyle(.roundedBorder)
-                    Button(role: .destructive, action: { upkeep.description = "" }) {
-                        Image(systemName: "x.square")
-                            .font(.title2)
+                    if isFocused {
+                        Button(role: .destructive, action: { upkeep.description = "" }) {
+                            Image(systemName: "x.square")
+                                .font(.title2)
+                        }
+                        .disabled(upkeep.description.isEmpty)
                     }
-                    .disabled(upkeep.description.isEmpty)
                 }
             }
             
@@ -98,14 +109,11 @@ struct ModifyUpkeepView: View {
         }
         .padding(.horizontal)
         .background(.gray.opacity(0.1))
+        .onAppear{isFocused = isNew}
     }
 }
 
 #Preview {
-    @State var upkeep = Item.exRocketShip.upkeeps[0]
-    return Text("ASDF")
-        .sheet(isPresented: .constant(true), content: {
-            ModifyUpkeepView(upkeep) { _ in }
-                .environmentObject(CollectionManager(collection: Item.list))
-        })
+    @State var id: UUID? = Item.exRocketShip.id
+    return ContentView(selectedItemID: id)
 }

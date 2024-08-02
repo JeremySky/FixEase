@@ -9,12 +9,13 @@ import SwiftUI
 
 struct MainView: View {
     
-    @EnvironmentObject var manager: CollectionManager
-    @State var numCompleted: Int = 0
+    @Binding var collection: [Item]
+    let selectItem: (Item) -> Void
     
+    @State var numCompleted: Int = 0
     var upkeeps: [Upkeep] {
         var list = [Upkeep]()
-        for item in manager.collection {
+        for item in collection {
             for upkeep in item.upkeeps {
                 var updatedUpkeep = upkeep
                 updatedUpkeep.emoji = item.emoji
@@ -26,12 +27,14 @@ struct MainView: View {
         }
         return list
     }
+    @State var newItemIsPresented: Bool = false
+    
     
     var body: some View {
         VStack(spacing: 15) {
             HStack {
                 Spacer()
-                Button("New Item") { manager.newItemSheet() }
+                Button("New Item") { newItemIsPresented = true }
             }
             .foregroundStyle(.white)
             .padding(.horizontal)
@@ -53,8 +56,8 @@ struct MainView: View {
             //MARK: -- Items List View...
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 17) {
-                    ForEach(Array(manager.collection)) { item in
-                        Button { manager.select(item: item) } label: {
+                    ForEach(collection) { item in
+                        Button { selectItem(item) } label: {
                             ZStack {
                                 Circle()
                                     .frame(width: 78)
@@ -86,7 +89,7 @@ struct MainView: View {
             //list...
             ScrollView {
                 VStack(spacing: 30) {
-                    ForEach(upkeeps, id: \.self) { upkeep in
+                    ForEach(upkeeps) { upkeep in
                         UpkeepRow(upkeep) {
                             numCompleted += 1
                         }
@@ -95,9 +98,9 @@ struct MainView: View {
                 .padding()
             }
         }
-        .sheet(item: $manager.modifyItem) { newItem in
-            ModifyItemView(submit: { manager.add(item: $0) })
-        }
+        .sheet(isPresented: $newItemIsPresented, content: {
+            ModifyItemView(submit: { collection.append($0) })
+        })
     }
 }
 

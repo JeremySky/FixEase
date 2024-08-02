@@ -7,29 +7,90 @@
 
 import SwiftUI
 
+extension Binding where Value == Bool {
+    init(sheet: Binding<Sheet?>) {
+        self.init {
+            switch sheet.wrappedValue?.type {
+            case nil, .modifyNote, .newNote:
+                return false
+            default:
+                return true
+            }
+        } set: { newValue in
+            if !newValue { sheet.wrappedValue = nil }
+        }
+
+    }
+}
+
+enum Sheet: Equatable {
+    static func == (lhs: Sheet, rhs: Sheet) -> Bool {
+        lhs.type == rhs.type
+    }
+    case modifyItem(Item), newUpkeep, modifyUpkeep(Upkeep), newNote, modifyNote(Note)
+    
+    var type: SheetType {
+        switch self {
+        case .modifyItem(_):
+                .modifyItem
+        case .newUpkeep:
+                .newUpkeep
+        case .modifyUpkeep(_):
+                .modifyUpkeep
+        case .newNote:
+                .newNote
+        case .modifyNote(_):
+                .modifyNote
+        }
+    }
+    
+    var value: (any Identifiable)? {
+        switch self {
+        case .modifyItem(let item):
+            item as Item
+        case .newUpkeep:
+            nil
+        case .modifyUpkeep(let upkeep):
+            upkeep as Upkeep
+        case .newNote:
+            nil
+        case .modifyNote(let note):
+            note as Note
+        }
+    }
+    
+    enum SheetType {
+        case modifyItem, newUpkeep, modifyUpkeep, newNote, modifyNote
+    }
+}
+
+
 struct ItemDetailView: View {
     
-    @EnvironmentObject var manager: CollectionManager
     @Binding var item: Item
+    @Binding var isPresented: Bool
+    @State var sheetIsPresenting: Sheet?
     @State var upkeepIndex: Int = 0
     
-    init(_ item: Binding<Item>) {
+    init(_ item: Binding<Item>, id: Binding<Bool>, sheetIsPresenting: Sheet? = nil) {
         self._item = item
+        self._isPresented = id
+        self.sheetIsPresenting = sheetIsPresenting
     }
     
     var body: some View {
         ZStack {
             VStack {
                 HStack {
-                    Button("Back") { manager.selectedItem = nil }
+                    Button("Back") { isPresented = false }
                     Spacer()
-                    Button("New Upkeep") { manager.modifyUpkeep = Upkeep() }
+                    Button("New Upkeep") { sheetIsPresenting = .newUpkeep }
                 }
                 .padding(.horizontal)
                 .foregroundStyle(.white)
                 
                 //MARK: -- Item Details...
-                Button(action: { manager.modifyItemSheet() }) {
+                Button(action: { sheetIsPresenting = .modifyItem(item) }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.name)
@@ -67,11 +128,8 @@ struct ItemDetailView: View {
                 
                 ZStack {
                     if !item.upkeeps.isEmpty {
-                        UpkeepDetailView(item.upkeeps[upkeepIndex])
+                        UpkeepDetailView($item.upkeeps[upkeepIndex], $sheetIsPresenting)
                         UpkeepIndexStepper($upkeepIndex, for: item)
-                            .onChange(of: upkeepIndex) { _, newValue in
-                                manager.select(upkeepAtIndex: newValue)
-                            }
                     } else {
                         VStack {
                             Text("EMPTY")
@@ -80,26 +138,40 @@ struct ItemDetailView: View {
                     }
                 }
             }
-            
-            
-            //MARK: -- Custom Sheet for ModifyNoteView...
-            if let originalNote = manager.selectedNote?.value {
-                ModifyNoteView(originalNote) { updatedNote in
-                    originalNote.isEmpty ? manager.add(note: updatedNote) : manager.update(note: updatedNote)
-                }
+        }
+        .overlay {
+            if sheetIsPresenting?.type == .newNote || sheetIsPresenting?.type == .modifyNote {
+                ModifyNoteView(sheetIsPresenting?.value as! Note?, $sheetIsPresenting) { note in
+                        if let i = item.upkeeps[upkeepIndex].notes.firstIndex(where: { $0.id == note.id }) {
+                            item.upkeeps[upkeepIndex].notes[i] = note
+                        } else {
+                            item.upkeeps[upkeepIndex].notes.append(note)
+                        }
+                        sheetIsPresenting = nil
+                    }
             }
         }
-        .sheet(item: $manager.modifyUpkeep) { upkeep in
-            ModifyUpkeepView(upkeep, submit: { upkeep.isEmpty ? manager.add(upkeep: $0) : manager.update(upkeep: $0) })
-        }
-        .sheet(item: $manager.modifyItem) { itemToModify in
-            ModifyItemView(itemToModify, submit: { manager.update(item: $0) })
-        }
+        .sheet(isPresented: Binding(sheet: $sheetIsPresenting), content: {
+            switch sheetIsPresenting {
+            case .modifyItem(let item):
+                ModifyItemView(item, submit: { self.item = $0 })
+            case .newUpkeep:
+                ModifyUpkeepView(submit: { item.upkeeps.append($0) })
+            case .modifyUpkeep(let upkeep):
+                ModifyUpkeepView(upkeep, submit: { self.item.upkeeps[upkeepIndex] = $0 })
+            default:
+                VStack {
+                    Text("Error")
+                    Button("Return", action: { sheetIsPresenting = nil })
+                }
+            }
+        })
     }
 }
 
 
 
 #Preview {
-    ContentView(collectionManager: CollectionManager.preview)
+    @State var id: UUID? = Item.exRocketShip.id
+    return ContentView(selectedItemID: id)
 }
