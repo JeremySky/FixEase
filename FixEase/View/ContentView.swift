@@ -6,16 +6,6 @@
 //
 import SwiftUI
 
-extension Binding where Value == Bool {
-    init<T>(value: Binding<Optional<T>>) {
-        self.init {
-            value.wrappedValue != nil
-        } set: { newValue in
-            if !newValue { value.wrappedValue = nil}
-        }
-    }
-}
-
 struct ContentView: View {
     
     @State var collection = Item.list
@@ -24,9 +14,9 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             if let i = collection.firstIndex(where: {$0.id == selectedItemID}) {
-                ItemDetailView($collection[i], id: Binding(value: $selectedItemID))
+                ItemDetailView($collection[i], $selectedItemID)
             } else {
-                MainView(collection: $collection) { selectItem($0) }
+                MainView($collection) { selectItem($0) }
             }
         }
         .background(getBackground())

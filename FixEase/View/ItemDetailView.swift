@@ -68,13 +68,13 @@ enum Sheet: Equatable {
 struct ItemDetailView: View {
     
     @Binding var item: Item
-    @Binding var isPresented: Bool
+    @Binding var selectedItemID: UUID?
     @State var sheetIsPresenting: Sheet?
     @State var upkeepIndex: Int = 0
     
-    init(_ item: Binding<Item>, id: Binding<Bool>, sheetIsPresenting: Sheet? = nil) {
+    init(_ item: Binding<Item>, _ selectedItemID: Binding<UUID?>, sheetIsPresenting: Sheet? = nil) {
         self._item = item
-        self._isPresented = id
+        self._selectedItemID = selectedItemID
         self.sheetIsPresenting = sheetIsPresenting
     }
     
@@ -82,7 +82,7 @@ struct ItemDetailView: View {
         ZStack {
             VStack {
                 HStack {
-                    Button("Back") { isPresented = false }
+                    Button("Back") { selectedItemID = nil }
                     Spacer()
                     Button("New Upkeep") { sheetIsPresenting = .newUpkeep }
                 }

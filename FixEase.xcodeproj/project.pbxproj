@@ -56,13 +56,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6238AC3B2C59924300F75B50 /* Manager */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Manager;
-			sourceTree = "<group>";
-		};
 		62802D2F2C46E4ED00234DE4 = {
 			isa = PBXGroup;
 			children = (
@@ -84,7 +77,6 @@
 			children = (
 				62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */,
 				62813A2D2C4EF98B001C9EF2 /* View */,
-				6238AC3B2C59924300F75B50 /* Manager */,
 				62813A2E2C4EF9AB001C9EF2 /* Model */,
 				62802D3F2C46E4F200234DE4 /* Assets.xcassets */,
 				62802D412C46E4F200234DE4 /* Preview Content */,

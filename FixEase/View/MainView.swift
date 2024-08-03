@@ -29,6 +29,12 @@ struct MainView: View {
     }
     @State var newItemIsPresented: Bool = false
     
+    init(_ collection: Binding<[Item]>, selectItem: @escaping (Item) -> Void, numCompleted: Int = 0, newItemIsPresented: Bool = false) {
+        self._collection = collection
+        self.selectItem = selectItem
+        self.numCompleted = numCompleted
+        self.newItemIsPresented = newItemIsPresented
+    }
     
     var body: some View {
         VStack(spacing: 15) {
