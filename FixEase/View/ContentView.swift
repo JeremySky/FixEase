@@ -13,7 +13,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            if let i = collection.firstIndex(where: {$0.id == selectedItemID}) {
+            if let i = getItemIndex() {
                 ItemDetailView($collection[i], $selectedItemID)
             } else {
                 MainView($collection) { selectItem($0) }
@@ -23,10 +23,13 @@ struct ContentView: View {
     }
     
     
-    func selectItem(_ item: Item) {
+    private func getItemIndex() -> Int? {
+        collection.firstIndex(where: {$0.id == selectedItemID})
+    }
+    private func selectItem(_ item: Item) {
         self.selectedItemID = item.id
     }
-    func getBackground() -> some View {
+    private func getBackground() -> some View {
         GeometryReader { geometry in
             VStack {
                 Ellipse()
