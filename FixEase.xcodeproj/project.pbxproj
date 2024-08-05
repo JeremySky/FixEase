@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		620BB19A2C616FE2003EDC4D /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620BB1992C616FE2003EDC4D /* Date.swift */; };
 		6238AC2F2C585F8900F75B50 /* ModifyNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */; };
 		6238AC382C58965D00F75B50 /* UpkeepDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC372C58965D00F75B50 /* UpkeepDetailView.swift */; };
 		6238AC3A2C589D3000F75B50 /* UpkeepIndexStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6238AC392C589D3000F75B50 /* UpkeepIndexStepper.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		620BB1992C616FE2003EDC4D /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyNoteView.swift; sourceTree = "<group>"; };
 		6238AC372C58965D00F75B50 /* UpkeepDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpkeepDetailView.swift; sourceTree = "<group>"; };
 		6238AC392C589D3000F75B50 /* UpkeepIndexStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpkeepIndexStepper.swift; sourceTree = "<group>"; };
@@ -56,6 +58,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		620BB1982C616FD5003EDC4D /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				620BB1992C616FE2003EDC4D /* Date.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		62802D2F2C46E4ED00234DE4 = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +88,7 @@
 				62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */,
 				62813A2D2C4EF98B001C9EF2 /* View */,
 				62813A2E2C4EF9AB001C9EF2 /* Model */,
+				620BB1982C616FD5003EDC4D /* Extensions */,
 				62802D3F2C46E4F200234DE4 /* Assets.xcassets */,
 				62802D412C46E4F200234DE4 /* Preview Content */,
 			);
@@ -190,6 +201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6238AC2F2C585F8900F75B50 /* ModifyNoteView.swift in Sources */,
+				620BB19A2C616FE2003EDC4D /* Date.swift in Sources */,
 				62813A242C49DA22001C9EF2 /* ItemDetailView.swift in Sources */,
 				62802D3E2C46E4ED00234DE4 /* ContentView.swift in Sources */,
 				62A8CFB32C5AF8C8002627E4 /* Note.swift in Sources */,

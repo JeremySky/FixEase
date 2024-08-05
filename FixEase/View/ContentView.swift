@@ -16,7 +16,7 @@ struct ContentView: View {
             if let i = getItemIndex() {
                 ItemDetailView($collection[i], $selectedItemID)
             } else {
-                MainView($collection) { selectItem($0) }
+                MainView($collection, selectItem: self.selectItem(_:))
             }
         }
         .background(getBackground())

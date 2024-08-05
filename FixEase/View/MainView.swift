@@ -7,26 +7,14 @@
 
 import SwiftUI
 
+
 struct MainView: View {
     
     @Binding var collection: [Item]
     let selectItem: (Item) -> Void
     
     @State var numCompleted: Int = 0
-    var upkeeps: [Upkeep] {
-        var list = [Upkeep]()
-        for item in collection {
-            for upkeep in item.upkeeps {
-                var updatedUpkeep = upkeep
-                updatedUpkeep.emoji = item.emoji
-                list.append(updatedUpkeep)
-            }
-        }
-        list.sort { x, y in
-            x.dueDate < y.dueDate
-        }
-        return list
-    }
+    var dueNow: [Upkeep] { self.getUpkeepsDueNow() }
     @State var newItemIsPresented: Bool = false
     
     init(_ collection: Binding<[Item]>, selectItem: @escaping (Item) -> Void, numCompleted: Int = 0, newItemIsPresented: Bool = false) {
@@ -86,7 +74,7 @@ struct MainView: View {
                     .font(.largeTitle.weight(.heavy))
                     .foregroundStyle(Color.greenLight)
                 Spacer()
-                Text("\(numCompleted)/\(upkeeps.count) Complete")
+                Text("\(numCompleted)/\(dueNow.count) Complete")
                     .fontWeight(.bold)
                     .foregroundStyle(.gray)
             }
@@ -95,7 +83,7 @@ struct MainView: View {
             //list...
             ScrollView {
                 VStack(spacing: 30) {
-                    ForEach(upkeeps) { upkeep in
+                    ForEach(dueNow) { upkeep in
                         UpkeepRow(upkeep) {
                             numCompleted += 1
                         }
@@ -107,6 +95,26 @@ struct MainView: View {
         .sheet(isPresented: $newItemIsPresented, content: {
             ModifyItemView(submit: { collection.append($0) })
         })
+    }
+    
+    
+    private func getUpkeepsDueNow() -> [Upkeep] {
+        func setEmoji(from item: Item, to upkeep: Upkeep) -> Upkeep {
+            var updatedUpkeep = upkeep
+            updatedUpkeep.emoji = item.emoji
+            return updatedUpkeep
+        }
+        
+        var list = [Upkeep]()
+        for item in collection {
+            for upkeep in item.upkeeps {
+                if upkeep.dueDate <= Date.endOfDay {
+                    list.append(setEmoji(from: item, to: upkeep))
+                }
+            }
+        }
+    
+        return list.sorted(by: { $0.emoji! < $1.emoji! })
     }
 }
 
