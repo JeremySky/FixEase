@@ -6,29 +6,69 @@
 //
 import SwiftUI
 
+class MainViewModel: ObservableObject {
+    @Published var collection: [Item]
+    @Published var selectedItemID: UUID?
+    @Published var dueNow: [(upkeep: Upkeep, isCompleted: Bool)]
+    
+    init(collection: [Item], selectedItemID: UUID? = nil, dueNow: [(upkeep: Upkeep, isCompleted: Bool)] = []) {
+        self.collection = collection
+        self.selectedItemID = selectedItemID
+        self.dueNow = dueNow
+    }
+    
+    func moveUpkeepToBottomOfList(id: UUID) {
+        if let i = self.dueNow.firstIndex(where: { $0.upkeep.id == id }) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation {
+                    let element = self.dueNow.remove(at: i)
+                    self.dueNow.append(element)
+                }
+            }
+        }
+    }
+    
+    func getUpkeepsDueNow() {
+        func setEmoji(from item: Item, to upkeep: Upkeep) -> Upkeep {
+            var updatedUpkeep = upkeep
+            updatedUpkeep.emoji = item.emoji
+            return updatedUpkeep
+        }
+        
+        var list = [Upkeep]()
+        for item in collection {
+            for upkeep in item.upkeeps {
+                if upkeep.dueDate <= Date.endOfDay {
+                    list.append(setEmoji(from: item, to: upkeep))
+                }
+            }
+        }
+    
+        self.dueNow = list.sorted(by: { $0.emoji! < $1.emoji! }).map({(upkeep: $0, isCompleted: false)})
+    }
+    func getItemIndex() -> Int? {
+        self.collection.firstIndex(where: {$0.id == self.selectedItemID})
+    }
+}
+
 struct ContentView: View {
     
-    @State var collection = Item.list
-    @State var selectedItemID: UUID?
+    @StateObject var viewModel: MainViewModel = MainViewModel(collection: Item.list)
     
     var body: some View {
         ZStack {
-            if let i = getItemIndex() {
-                ItemDetailView($collection[i], $selectedItemID)
+            if let i = viewModel.getItemIndex() {
+                ItemDetailView($viewModel.collection[i], $viewModel.selectedItemID)
             } else {
-                MainView($collection, selectItem: self.selectItem(_:))
+                MainView(viewModel: viewModel)
             }
         }
         .background(getBackground())
+        .onAppear {
+            viewModel.getUpkeepsDueNow()
+        }
     }
     
-    
-    private func getItemIndex() -> Int? {
-        collection.firstIndex(where: {$0.id == selectedItemID})
-    }
-    private func selectItem(_ item: Item) {
-        self.selectedItemID = item.id
-    }
     private func getBackground() -> some View {
         GeometryReader { geometry in
             VStack {

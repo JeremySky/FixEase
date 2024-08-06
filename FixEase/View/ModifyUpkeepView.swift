@@ -16,11 +16,17 @@ struct ModifyUpkeepView: View {
     
     var isNew: Bool
     
-    init(_ upkeep: Upkeep = Upkeep(), submit: @escaping (Upkeep) -> Void) {
+    init(_ upkeep: Upkeep, submit: @escaping (Upkeep) -> Void) {
         self.upkeep = upkeep
         self.submit = submit
-        self.isNew = upkeep.isEmpty
+        self.isNew = false
     }
+    
+//    init(newUpkeepFromItem item: Item, submit: @escaping (Upkeep) -> Void) {
+//        self.upkeep = Upkeep(itemID: item.id)
+//        self.submit = submit
+//        self.isNew = true
+//    }
     
     
     var body: some View {
@@ -114,6 +120,6 @@ struct ModifyUpkeepView: View {
 }
 
 #Preview {
-    @State var id: UUID? = Item.exRocketShip.id
-    return ContentView(selectedItemID: id)
+    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exRocketShip.id)
+    return ContentView(viewModel: viewModel)
 }

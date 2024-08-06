@@ -10,19 +10,8 @@ import SwiftUI
 
 struct MainView: View {
     
-    @Binding var collection: [Item]
-    let selectItem: (Item) -> Void
-    
-    @State var numCompleted: Int = 0
-    var dueNow: [Upkeep] { self.getUpkeepsDueNow() }
+    @ObservedObject var viewModel: MainViewModel
     @State var newItemIsPresented: Bool = false
-    
-    init(_ collection: Binding<[Item]>, selectItem: @escaping (Item) -> Void, numCompleted: Int = 0, newItemIsPresented: Bool = false) {
-        self._collection = collection
-        self.selectItem = selectItem
-        self.numCompleted = numCompleted
-        self.newItemIsPresented = newItemIsPresented
-    }
     
     var body: some View {
         VStack(spacing: 15) {
@@ -50,8 +39,8 @@ struct MainView: View {
             //MARK: -- Items List View...
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 17) {
-                    ForEach(collection) { item in
-                        Button { selectItem(item) } label: {
+                    ForEach(viewModel.collection) { item in
+                        Button { viewModel.selectedItemID = item.id } label: {
                             ZStack {
                                 Circle()
                                     .frame(width: 78)
@@ -60,7 +49,7 @@ struct MainView: View {
                                 Text(item.emoji)
                                     .font(.custom("Item Button", fixedSize: 45))
                             }
-                        } 
+                        }
                     }
                 }
                 .padding()
@@ -74,18 +63,38 @@ struct MainView: View {
                     .font(.largeTitle.weight(.heavy))
                     .foregroundStyle(Color.greenLight)
                 Spacer()
-                Text("\(numCompleted)/\(dueNow.count) Complete")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.gray)
             }
             .padding(.horizontal)
             
             //list...
             ScrollView {
                 VStack(spacing: 30) {
-                    ForEach(dueNow) { upkeep in
-                        UpkeepRow(upkeep) {
-                            numCompleted += 1
+                    ForEach($viewModel.dueNow, id: \.self.upkeep.id) { $value in
+                        UpkeepRow(value.upkeep, isCompleted: $value.isCompleted) {
+//                            update collection[i].upkeeps[j].dueDate
+                            let cycle = value.upkeep.cycle
+                            let rule = cycle.rule
+                            let unit = cycle.unit
+                            var components = DateComponents()
+                            
+                            switch rule {
+                            case .days:
+                                components.day = unit
+                            case .weeks:
+                                components.day = (unit * 7)
+                            case .months:
+                                components.month = unit
+                            case .years:
+                                components.year = unit
+                            }
+                            
+                            let refreshedDate = Calendar.current.date(byAdding: components, to: Date())!
+                            let i = viewModel.collection.firstIndex(where: { $0.id == value.upkeep.itemID })!
+                            let j = viewModel.collection[i].upkeeps.firstIndex(where: { $0.id == value.upkeep.id })!
+                            
+                            viewModel.collection[i].upkeeps[j].dueDate = refreshedDate
+//                            remove or move to bottom of viewModel.dueNow
+                            viewModel.moveUpkeepToBottomOfList(id: value.upkeep.id)
                         }
                     }
                 }
@@ -93,28 +102,8 @@ struct MainView: View {
             }
         }
         .sheet(isPresented: $newItemIsPresented, content: {
-            ModifyItemView(submit: { collection.append($0) })
+            ModifyItemView(submit: { viewModel.collection.append($0) })
         })
-    }
-    
-    
-    private func getUpkeepsDueNow() -> [Upkeep] {
-        func setEmoji(from item: Item, to upkeep: Upkeep) -> Upkeep {
-            var updatedUpkeep = upkeep
-            updatedUpkeep.emoji = item.emoji
-            return updatedUpkeep
-        }
-        
-        var list = [Upkeep]()
-        for item in collection {
-            for upkeep in item.upkeeps {
-                if upkeep.dueDate <= Date.endOfDay {
-                    list.append(setEmoji(from: item, to: upkeep))
-                }
-            }
-        }
-    
-        return list.sorted(by: { $0.emoji! < $1.emoji! })
     }
 }
 

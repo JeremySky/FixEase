@@ -59,6 +59,6 @@ struct UpkeepDetailView: View {
 }
 
 #Preview {
-    @State var id: UUID? = Item.exRocketShip.id
-    return ContentView(selectedItemID: id)
+    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exRocketShip.id)
+    return ContentView(viewModel: viewModel)
 }

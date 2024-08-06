@@ -10,10 +10,10 @@ import SwiftUI
 struct UpkeepRow: View {
     
     let upkeep: Upkeep
-    @State var isCompleted = false
+    @Binding var isCompleted: Bool
     let action: () -> Void
     
-    init(_ upkeep: Upkeep, isCompleted: State<Bool> = .init(initialValue: false), action: @escaping () -> Void) {
+    init(_ upkeep: Upkeep, isCompleted: Binding<Bool>, action: @escaping () -> Void) {
         self.upkeep = upkeep
         self._isCompleted = isCompleted
         self.action = action
@@ -74,6 +74,6 @@ struct UpkeepRow: View {
 }
 
 #Preview {
-    UpkeepRow(Upkeep.listRocketShip[0]) {}
+    UpkeepRow(.listRocketShip[0], isCompleted: .constant(false)) {}
         .padding()
 }
