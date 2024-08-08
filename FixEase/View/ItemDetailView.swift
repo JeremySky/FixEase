@@ -84,7 +84,9 @@ struct ItemDetailView: View {
                 HStack {
                     Button("Back") { selectedItemID = nil }
                     Spacer()
-                    Button("New Upkeep") { sheetIsPresenting = .newUpkeep }
+                    if !item.upkeeps.isEmpty {
+                        Button("New Upkeep") { sheetIsPresenting = .newUpkeep }
+                    }
                 }
                 .padding(.horizontal)
                 .foregroundStyle(.white)
@@ -102,7 +104,7 @@ struct ItemDetailView: View {
                                 .padding(.bottom, 10)
                             Text("\(item.upkeeps.count) Upkeeps")
                                 .font(.largeTitle.weight(.black).width(.compressed))
-                                .foregroundStyle(Color.black.opacity(0.8))
+                                .foregroundStyle(Color.gray)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
@@ -131,10 +133,7 @@ struct ItemDetailView: View {
                         UpkeepDetailView($item.upkeeps[upkeepIndex], $sheetIsPresenting)
                         UpkeepIndexStepper($upkeepIndex, for: item)
                     } else {
-                        VStack {
-                            Text("EMPTY")
-                            Spacer()
-                        }
+                        EmptyView(newUpkeep: { sheetIsPresenting = .newUpkeep })
                     }
                 }
             }
@@ -173,6 +172,23 @@ struct ItemDetailView: View {
 
 
 #Preview {
-    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exRocketShip.id)
+    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exShoe.id)
     return ContentView(viewModel: viewModel)
+}
+
+extension ItemDetailView {
+    struct EmptyView: View {
+        let newUpkeep: () -> Void
+        
+        var body: some View {
+            VStack(spacing: 40) {
+                Image("washing_dishes")
+                    .resizable()
+                    .scaledToFit()
+                Button("Add Upkeep +", action: newUpkeep)
+                    .foregroundStyle(.greenDark)
+                Spacer()
+            }
+        }
+    }
 }

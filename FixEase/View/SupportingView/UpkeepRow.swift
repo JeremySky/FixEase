@@ -12,11 +12,15 @@ struct UpkeepRow: View {
     let upkeep: Upkeep
     @Binding var isCompleted: Bool
     let action: () -> Void
+    @State var animationAmount: CGFloat
+    let startWithAnimation: Bool
     
-    init(_ upkeep: Upkeep, isCompleted: Binding<Bool>, action: @escaping () -> Void) {
+    init(_ upkeep: Upkeep, isCompleted: Binding<Bool>, startWithAnimation: Bool = false, action: @escaping () -> Void) {
         self.upkeep = upkeep
         self._isCompleted = isCompleted
         self.action = action
+        self.animationAmount = 1
+        self.startWithAnimation = startWithAnimation
     }
     
     var body: some View {
@@ -63,6 +67,16 @@ struct UpkeepRow: View {
                         .frame(width: 25)
                         .foregroundStyle(Color.greenLight)
                         .bold(isCompleted)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3)
+                                .stroke(.greenLight)
+                                .scaleEffect(isCompleted ? 0 : animationAmount)
+                                .opacity(isCompleted ? 0 : (1.7 - animationAmount))
+                                .animation(
+                                    !isCompleted ? .easeOut(duration: 1).repeatForever(autoreverses: false) : .default,
+                                    value: animationAmount
+                                )
+                        )
                 })
                 .disabled(isCompleted)
             }
@@ -70,10 +84,16 @@ struct UpkeepRow: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 115)
+        .onAppear() {
+            if startWithAnimation {
+                animationAmount = 1.7
+            }
+        }
     }
 }
 
 #Preview {
-    UpkeepRow(.listRocketShip[0], isCompleted: .constant(false)) {}
+    @State var isCompleted: Bool = false
+    return UpkeepRow(Upkeep.listRocketShip[0], isCompleted: $isCompleted) {}
         .padding()
 }
