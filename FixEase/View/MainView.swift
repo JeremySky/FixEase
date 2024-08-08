@@ -85,7 +85,8 @@ struct MainView: View {
                 .padding(.horizontal)
             } else {
                 Text("Add an item to your collection...")
-                    .padding()
+                    .foregroundStyle(.gray)
+                    .padding(.top)
             }
             
             //list...
@@ -112,6 +113,7 @@ struct MainView: View {
                     .padding()
                 if viewModel.dueNow.isEmpty && !viewModel.collection.isEmpty {
                     Text("Relax, all tasks are complete!")
+                        .foregroundStyle(.gray)
                 }
                 Spacer()
             }

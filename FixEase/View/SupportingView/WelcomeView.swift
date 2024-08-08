@@ -24,6 +24,7 @@ struct WelcomeView: View {
             Spacer()
             VStack(alignment: .leading) {
                 Text("Lets start with a name...")
+                    .foregroundStyle(.gray)
                     .padding(.bottom)
                 TextField("Name", text: $name)
                     .textFieldStyle(.roundedBorder)

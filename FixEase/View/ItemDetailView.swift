@@ -155,8 +155,7 @@ struct ItemDetailView: View {
             case .modifyItem(let item):
                 ModifyItemView(item, submit: { self.item = $0 })
             case .newUpkeep:
-//                ModifyUpkeepView(newUpkeepFromItem: item, submit: { item.upkeeps.append($0) })
-                Text("ASDF")
+                ModifyUpkeepView(Upkeep(itemID: item.id), submit: { self.item.upkeeps.append($0) })
             case .modifyUpkeep(let upkeep):
                 ModifyUpkeepView(upkeep, submit: { self.item.upkeeps[upkeepIndex] = $0 })
             default:

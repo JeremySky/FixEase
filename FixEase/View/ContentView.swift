@@ -21,7 +21,7 @@ struct ContentView: View {
                 } else {
                     WelcomeView() { name in
                         showTutorial = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { viewModel.name = name })
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: { viewModel.name = name })
                     }
                 }
             }
