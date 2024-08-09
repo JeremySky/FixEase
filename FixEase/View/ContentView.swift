@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             if let i = viewModel.getItemIndex() {
-                ItemDetailView($viewModel.collection[i], $viewModel.selectedItemID)
+                ItemDetailView($viewModel.collection[i], $viewModel.selectedItemID, viewModel: viewModel)
             } else {
                 if !viewModel.name.isEmpty {
                     MainView(viewModel: viewModel)

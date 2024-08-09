@@ -67,15 +67,17 @@ enum Sheet: Equatable {
 
 struct ItemDetailView: View {
     
+    @ObservedObject var viewModel: MainViewModel
     @Binding var item: Item
     @Binding var selectedItemID: UUID?
     @State var sheetIsPresenting: Sheet?
     @State var upkeepIndex: Int = 0
     
-    init(_ item: Binding<Item>, _ selectedItemID: Binding<UUID?>, sheetIsPresenting: Sheet? = nil) {
+    init(_ item: Binding<Item>, _ selectedItemID: Binding<UUID?>, sheetIsPresenting: Sheet? = nil, viewModel: MainViewModel) {
         self._item = item
         self._selectedItemID = selectedItemID
         self.sheetIsPresenting = sheetIsPresenting
+        self.viewModel = viewModel
     }
     
     var body: some View {
@@ -153,11 +155,54 @@ struct ItemDetailView: View {
         .sheet(isPresented: Binding(sheet: $sheetIsPresenting), content: {
             switch sheetIsPresenting {
             case .modifyItem(let item):
-                ModifyItemView(item, submit: { self.item = $0 })
+                ModifyItemView(item) { updatedItem in
+                    self.item = updatedItem
+                    
+                    // update viewModel.dueNow's upkeep's emojis...
+                    viewModel.dueNow = viewModel.dueNow.map({ task in
+                        if task.upkeep.itemID == updatedItem.id {
+                            var updatedUpkeep = task.upkeep
+                            updatedUpkeep.emoji = updatedItem.emoji
+                            return (upkeep: updatedUpkeep, isCompleted: task.isCompleted)
+                        } else {
+                            return task
+                        }
+                    })
+                }
             case .newUpkeep:
-                ModifyUpkeepView(Upkeep(itemID: item.id), submit: { self.item.upkeeps.append($0) })
+                ModifyUpkeepView(Upkeep(itemID: item.id)) { newUpkeep in
+                    self.item.upkeeps.append(newUpkeep)
+                    
+                    // add newUpkeep to viewModel.dueNow if needed...
+                    if newUpkeep.dueDate <= Date.endOfDay {
+                        var upkeepWithEmoji = newUpkeep
+                        upkeepWithEmoji.emoji = item.emoji
+                        viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
+                    }
+                }
             case .modifyUpkeep(let upkeep):
-                ModifyUpkeepView(upkeep, submit: { self.item.upkeeps[upkeepIndex] = $0 })
+                ModifyUpkeepView(upkeep) { updatedUpkeep in
+                    self.item.upkeeps[upkeepIndex] = updatedUpkeep
+                    
+                    var upkeepWithEmoji = updatedUpkeep
+                    upkeepWithEmoji.emoji = item.emoji
+                    
+                    // edit viewModel.dueNow's matching upkeep...
+                    if let i = viewModel.dueNow.firstIndex(where: { $0.upkeep.id == upkeepWithEmoji.id }) {
+                        // replace old upkeep with updatedUpkeep...
+                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
+                            viewModel.dueNow[i] = (upkeep: upkeepWithEmoji, isCompleted: false)
+                        } else {
+                            // remove upkeep if it is not due anymore...
+                            viewModel.dueNow.remove(at: i)
+                        }
+                    } else {
+                        // add updatedUpkeep to viewModel.dueNow if needed...
+                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
+                            viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
+                        }
+                    }
+                }
             default:
                 VStack {
                     Text("Error")

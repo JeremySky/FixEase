@@ -122,6 +122,8 @@
 			isa = PBXGroup;
 			children = (
 				62F2E9972C631303008153E7 /* SupportingView */,
+				62F2E9A72C644A3E008153E7 /* WelcomeView.swift */,
+				62F2E9A92C644ECE008153E7 /* TutorialTabView.swift */,
 				62802D3D2C46E4ED00234DE4 /* ContentView.swift */,
 				62802D492C488DAD00234DE4 /* MainView.swift */,
 				62813A232C49DA22001C9EF2 /* ItemDetailView.swift */,
@@ -149,8 +151,6 @@
 			isa = PBXGroup;
 			children = (
 				62813A1F2C49C35C001C9EF2 /* UpkeepRow.swift */,
-				62F2E9A72C644A3E008153E7 /* WelcomeView.swift */,
-				62F2E9A92C644ECE008153E7 /* TutorialTabView.swift */,
 			);
 			path = SupportingView;
 			sourceTree = "<group>";
