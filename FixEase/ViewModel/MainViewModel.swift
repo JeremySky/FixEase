@@ -8,16 +8,107 @@
 import Foundation
 
 class MainViewModel: ObservableObject {
-    @Published var name: String
+    @Published var user: User?
     @Published var collection: [Item]
     @Published var selectedItemID: UUID?
     @Published var dueNow: [(upkeep: Upkeep, isCompleted: Bool)]
     
-    init(name: String = "", collection: [Item], selectedItemID: UUID? = nil, dueNow: [(upkeep: Upkeep, isCompleted: Bool)] = []) {
-        self.name = name
+    init(user: User? = nil, collection: [Item], selectedItemID: UUID? = nil, dueNow: [(upkeep: Upkeep, isCompleted: Bool)] = []) {
+        self.user = user
         self.collection = collection
         self.selectedItemID = selectedItemID
         self.dueNow = dueNow
+        
+        getUser()
+        getCollection()
+    }
+    
+    func saveNote(selectedItem item: inout Item, upkeepIndex: Int, note: Note) {
+        if let i = item.upkeeps[upkeepIndex].notes.firstIndex(where: { $0.id == note.id }) {
+            item.upkeeps[upkeepIndex].notes[i] = note
+        } else {
+            item.upkeeps[upkeepIndex].notes.append(note)
+        }
+        
+        FileManagerHelper.shared.saveItem(item)
+    }
+    
+    func updateUpkeep(selectedItem item: inout Item, upkeepIndex: Int, updatedUpkeep: Upkeep) {
+        item.upkeeps[upkeepIndex] = updatedUpkeep
+        
+        var upkeepWithEmoji = updatedUpkeep
+        upkeepWithEmoji.emoji = item.emoji
+        
+        // edit viewModel.dueNow's matching upkeep...
+        if let i = self.dueNow.firstIndex(where: { $0.upkeep.id == upkeepWithEmoji.id }) {
+            // replace old upkeep with updatedUpkeep...
+            if upkeepWithEmoji.dueDate <= Date.endOfDay {
+                self.dueNow[i] = (upkeep: upkeepWithEmoji, isCompleted: false)
+            } else {
+                // remove upkeep if it is not due anymore...
+                self.dueNow.remove(at: i)
+            }
+        } else {
+            // add updatedUpkeep to viewModel.dueNow if needed...
+            if upkeepWithEmoji.dueDate <= Date.endOfDay {
+                self.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
+            }
+        }
+        
+        
+        
+        FileManagerHelper.shared.saveItem(item)
+    }
+    
+    func addUpkeep(selectedItem item: inout Item, add newUpkeep: Upkeep) {
+        item.upkeeps.append(newUpkeep)
+        
+        // add newUpkeep to viewModel.dueNow if needed...
+        if newUpkeep.dueDate <= Date.endOfDay {
+            var upkeepWithEmoji = newUpkeep
+            upkeepWithEmoji.emoji = item.emoji
+            self.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
+        }
+        
+        FileManagerHelper.shared.saveItem(item)
+    }
+    
+    func updateItem(selectedItem item: inout Item, to updatedItem: Item) {
+        item = updatedItem
+        // update viewModel.dueNow's upkeep's emojis...
+        self.dueNow = self.dueNow.map({ task in
+            if task.upkeep.itemID == updatedItem.id {
+                var updatedUpkeep = task.upkeep
+                updatedUpkeep.emoji = updatedItem.emoji
+                return (upkeep: updatedUpkeep, isCompleted: task.isCompleted)
+            } else {
+                return task
+            }
+        })
+        
+        // persist to FileManager - replacing data at path matching items id
+        FileManagerHelper.shared.saveItem(updatedItem)
+    }
+    
+    private func getCollection() {
+        let items = FileManagerHelper.shared.fetchItems()
+        guard let items else { /* ERROR */ return }
+        self.collection = items
+    }
+    
+    func addItem(_ item: Item) {
+        FileManagerHelper.shared.saveItem(item)
+        self.collection.append(item)
+    }
+    
+    func createUser(_ name: String) {
+        let newUser = User(name: name)
+        self.user = newUser
+        UserDefaultsHelper.shared.saveUser(newUser)
+    }
+    
+    private func getUser() {
+        self.user = UserDefaultsHelper.shared.getUser()
     }
     
     func refreshDueDate(upkeep: Upkeep) {
@@ -71,6 +162,7 @@ class MainViewModel: ObservableObject {
     
         self.dueNow = list.sorted(by: { $0.emoji! < $1.emoji! }).map({(upkeep: $0, isCompleted: false)})
     }
+    
     func getItemIndex() -> Int? {
         self.collection.firstIndex(where: {$0.id == self.selectedItemID})
     }

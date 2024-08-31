@@ -29,6 +29,9 @@
 		62F2E9A62C6448F2008153E7 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9A52C6448F2008153E7 /* MainViewModel.swift */; };
 		62F2E9A82C644A3E008153E7 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9A72C644A3E008153E7 /* WelcomeView.swift */; };
 		62F2E9AA2C644ECE008153E7 /* TutorialTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9A92C644ECE008153E7 /* TutorialTabView.swift */; };
+		62F2E9AC2C7FE27C008153E7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9AB2C7FE27C008153E7 /* User.swift */; };
+		62F2E9AF2C7FE633008153E7 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9AE2C7FE633008153E7 /* UserDefaults.swift */; };
+		62F2E9B12C7FED65008153E7 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9B02C7FED65008153E7 /* FileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +59,9 @@
 		62F2E9A52C6448F2008153E7 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		62F2E9A72C644A3E008153E7 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		62F2E9A92C644ECE008153E7 /* TutorialTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialTabView.swift; sourceTree = "<group>"; };
+		62F2E9AB2C7FE27C008153E7 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		62F2E9AE2C7FE633008153E7 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		62F2E9B02C7FED65008153E7 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +103,7 @@
 		62802D3A2C46E4ED00234DE4 /* FixEase */ = {
 			isa = PBXGroup;
 			children = (
+				62F2E9AD2C7FE625008153E7 /* Manager */,
 				62802D3B2C46E4ED00234DE4 /* FixEaseApp.swift */,
 				62813A2D2C4EF98B001C9EF2 /* View */,
 				62F2E9A42C6448C3008153E7 /* ViewModel */,
@@ -122,9 +129,9 @@
 			isa = PBXGroup;
 			children = (
 				62F2E9972C631303008153E7 /* SupportingView */,
+				62802D3D2C46E4ED00234DE4 /* ContentView.swift */,
 				62F2E9A72C644A3E008153E7 /* WelcomeView.swift */,
 				62F2E9A92C644ECE008153E7 /* TutorialTabView.swift */,
-				62802D3D2C46E4ED00234DE4 /* ContentView.swift */,
 				62802D492C488DAD00234DE4 /* MainView.swift */,
 				62813A232C49DA22001C9EF2 /* ItemDetailView.swift */,
 				6238AC372C58965D00F75B50 /* UpkeepDetailView.swift */,
@@ -143,6 +150,7 @@
 				62813A292C4B2A84001C9EF2 /* Item.swift */,
 				62A8CFB22C5AF8C8002627E4 /* Note.swift */,
 				62813A2B2C4B2B70001C9EF2 /* Emoji.swift */,
+				62F2E9AB2C7FE27C008153E7 /* User.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -169,6 +177,15 @@
 				62F2E9A52C6448F2008153E7 /* MainViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		62F2E9AD2C7FE625008153E7 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				62F2E9AE2C7FE633008153E7 /* UserDefaults.swift */,
+				62F2E9B02C7FED65008153E7 /* FileManager.swift */,
+			);
+			path = Manager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -247,9 +264,12 @@
 				62F2E9A62C6448F2008153E7 /* MainViewModel.swift in Sources */,
 				62813A242C49DA22001C9EF2 /* ItemDetailView.swift in Sources */,
 				62F2E9AA2C644ECE008153E7 /* TutorialTabView.swift in Sources */,
+				62F2E9AF2C7FE633008153E7 /* UserDefaults.swift in Sources */,
 				62802D3E2C46E4ED00234DE4 /* ContentView.swift in Sources */,
+				62F2E9B12C7FED65008153E7 /* FileManager.swift in Sources */,
 				62A8CFB32C5AF8C8002627E4 /* Note.swift in Sources */,
 				62813A2C2C4B2B70001C9EF2 /* Emoji.swift in Sources */,
+				62F2E9AC2C7FE27C008153E7 /* User.swift in Sources */,
 				62802D4A2C488DAD00234DE4 /* MainView.swift in Sources */,
 				62813A262C4B2740001C9EF2 /* Upkeep.swift in Sources */,
 				62813A302C4F3E0D001C9EF2 /* ModifyItemView.swift in Sources */,

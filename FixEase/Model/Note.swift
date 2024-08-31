@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Note: Hashable, Identifiable {
+struct Note: Hashable, Identifiable, Codable {
     var id: UUID
     var string: String
     var isEmpty: Bool { self.string.isEmpty }

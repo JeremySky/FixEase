@@ -30,7 +30,7 @@ struct MainView: View {
             
             //MARK: -- Welcome message...
             VStack(alignment: .leading) {
-                Text("Hello, \(viewModel.name)")
+                Text("Hello, \(viewModel.user?.name ?? String("Friend"))")
                     .font(.title.weight(.bold))
                 Text("Keep your valuables in prime condition.")
             }
@@ -119,11 +119,11 @@ struct MainView: View {
             }
         }
         .sheet(isPresented: $newItemIsPresented, content: {
-            ModifyItemView(submit: { viewModel.collection.append($0) })
+            ModifyItemView() { viewModel.addItem($0) }
         })
     }
 }
 
 #Preview {
-    ContentView(viewModel: MainViewModel(name: "Jeremy", collection: []))
+    ContentView(viewModel: MainViewModel(user: User.test, collection: []))
 }

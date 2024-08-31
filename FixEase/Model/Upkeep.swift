@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Upkeep: Hashable, Identifiable {
+struct Upkeep: Hashable, Identifiable, Codable {
     var id: UUID
     var description: String
     var dueDate: Date
@@ -30,7 +30,7 @@ struct Upkeep: Hashable, Identifiable {
 }
 
 extension Upkeep {
-    struct Cycle: Hashable {
+    struct Cycle: Hashable, Codable {
         var rule: Rule
         var unit: Int
         
@@ -38,7 +38,7 @@ extension Upkeep {
             "\(unit) \(unit == 1 ? rule.singularDescription : rule.pluralDescription)"
         }
         
-        enum Rule: CaseIterable, Identifiable {
+        enum Rule: CaseIterable, Identifiable, Codable {
             case days, weeks, months, years
             
             var id: Self { self }

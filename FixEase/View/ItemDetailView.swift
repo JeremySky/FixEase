@@ -142,67 +142,71 @@ struct ItemDetailView: View {
         }
         .overlay {
             if sheetIsPresenting?.type == .newNote || sheetIsPresenting?.type == .modifyNote {
-                ModifyNoteView(sheetIsPresenting?.value as! Note?, $sheetIsPresenting) { note in
-                        if let i = item.upkeeps[upkeepIndex].notes.firstIndex(where: { $0.id == note.id }) {
-                            item.upkeeps[upkeepIndex].notes[i] = note
-                        } else {
-                            item.upkeeps[upkeepIndex].notes.append(note)
-                        }
-                        sheetIsPresenting = nil
-                    }
+                ModifyNoteView(sheetIsPresenting?.value as! Note?, $sheetIsPresenting) { viewModel.saveNote(selectedItem: &self.item, upkeepIndex: self.upkeepIndex, note: $0) }
+//                ModifyNoteView(sheetIsPresenting?.value as! Note?, $sheetIsPresenting) { note in
+//                        if let i = item.upkeeps[upkeepIndex].notes.firstIndex(where: { $0.id == note.id }) {
+//                            item.upkeeps[upkeepIndex].notes[i] = note
+//                        } else {
+//                            item.upkeeps[upkeepIndex].notes.append(note)
+//                        }
+//                        sheetIsPresenting = nil
+//                    }
             }
         }
         .sheet(isPresented: Binding(sheet: $sheetIsPresenting), content: {
             switch sheetIsPresenting {
             case .modifyItem(let item):
-                ModifyItemView(item) { updatedItem in
-                    self.item = updatedItem
-                    
-                    // update viewModel.dueNow's upkeep's emojis...
-                    viewModel.dueNow = viewModel.dueNow.map({ task in
-                        if task.upkeep.itemID == updatedItem.id {
-                            var updatedUpkeep = task.upkeep
-                            updatedUpkeep.emoji = updatedItem.emoji
-                            return (upkeep: updatedUpkeep, isCompleted: task.isCompleted)
-                        } else {
-                            return task
-                        }
-                    })
-                }
+                ModifyItemView(item) { viewModel.updateItem(selectedItem: &self.item, to: $0) }
+//                ModifyItemView(item) { updatedItem in
+//                    self.item = updatedItem
+//                    
+//                    // update viewModel.dueNow's upkeep's emojis...
+//                    viewModel.dueNow = viewModel.dueNow.map({ task in
+//                        if task.upkeep.itemID == updatedItem.id {
+//                            var updatedUpkeep = task.upkeep
+//                            updatedUpkeep.emoji = updatedItem.emoji
+//                            return (upkeep: updatedUpkeep, isCompleted: task.isCompleted)
+//                        } else {
+//                            return task
+//                        }
+//                    })
+//                }
             case .newUpkeep:
-                ModifyUpkeepView(Upkeep(itemID: item.id)) { newUpkeep in
-                    self.item.upkeeps.append(newUpkeep)
-                    
-                    // add newUpkeep to viewModel.dueNow if needed...
-                    if newUpkeep.dueDate <= Date.endOfDay {
-                        var upkeepWithEmoji = newUpkeep
-                        upkeepWithEmoji.emoji = item.emoji
-                        viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
-                    }
-                }
+                ModifyUpkeepView(Upkeep(itemID: item.id)) { viewModel.addUpkeep(selectedItem: &self.item, add: $0) }
+//                ModifyUpkeepView(Upkeep(itemID: item.id)) { newUpkeep in
+//                    self.item.upkeeps.append(newUpkeep)
+//                    
+//                    // add newUpkeep to viewModel.dueNow if needed...
+//                    if newUpkeep.dueDate <= Date.endOfDay {
+//                        var upkeepWithEmoji = newUpkeep
+//                        upkeepWithEmoji.emoji = item.emoji
+//                        viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
+//                    }
+//                }
             case .modifyUpkeep(let upkeep):
-                ModifyUpkeepView(upkeep) { updatedUpkeep in
-                    self.item.upkeeps[upkeepIndex] = updatedUpkeep
-                    
-                    var upkeepWithEmoji = updatedUpkeep
-                    upkeepWithEmoji.emoji = item.emoji
-                    
-                    // edit viewModel.dueNow's matching upkeep...
-                    if let i = viewModel.dueNow.firstIndex(where: { $0.upkeep.id == upkeepWithEmoji.id }) {
-                        // replace old upkeep with updatedUpkeep...
-                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
-                            viewModel.dueNow[i] = (upkeep: upkeepWithEmoji, isCompleted: false)
-                        } else {
-                            // remove upkeep if it is not due anymore...
-                            viewModel.dueNow.remove(at: i)
-                        }
-                    } else {
-                        // add updatedUpkeep to viewModel.dueNow if needed...
-                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
-                            viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
-                        }
-                    }
-                }
+                ModifyUpkeepView(upkeep) { viewModel.updateUpkeep(selectedItem: &self.item, upkeepIndex: self.upkeepIndex, updatedUpkeep: $0) }
+//                ModifyUpkeepView(upkeep) { updatedUpkeep in
+//                    self.item.upkeeps[upkeepIndex] = updatedUpkeep
+//                    
+//                    var upkeepWithEmoji = updatedUpkeep
+//                    upkeepWithEmoji.emoji = item.emoji
+//                    
+//                    // edit viewModel.dueNow's matching upkeep...
+//                    if let i = viewModel.dueNow.firstIndex(where: { $0.upkeep.id == upkeepWithEmoji.id }) {
+//                        // replace old upkeep with updatedUpkeep...
+//                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
+//                            viewModel.dueNow[i] = (upkeep: upkeepWithEmoji, isCompleted: false)
+//                        } else {
+//                            // remove upkeep if it is not due anymore...
+//                            viewModel.dueNow.remove(at: i)
+//                        }
+//                    } else {
+//                        // add updatedUpkeep to viewModel.dueNow if needed...
+//                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
+//                            viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
+//                        }
+//                    }
+//                }
             default:
                 VStack {
                     Text("Error")

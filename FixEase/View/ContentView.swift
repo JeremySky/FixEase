@@ -16,12 +16,13 @@ struct ContentView: View {
             if let i = viewModel.getItemIndex() {
                 ItemDetailView($viewModel.collection[i], $viewModel.selectedItemID, viewModel: viewModel)
             } else {
-                if !viewModel.name.isEmpty {
+                if viewModel.user != nil {
                     MainView(viewModel: viewModel)
                 } else {
                     WelcomeView() { name in
                         showTutorial = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: { viewModel.name = name })
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+                            viewModel.createUser(name)                        })
                     }
                 }
             }
