@@ -133,6 +133,11 @@ class MainViewModel: ObservableObject {
         let j = self.collection[i].upkeeps.firstIndex(where: { $0.id == upkeep.id })!
         
         self.collection[i].upkeeps[j].dueDate = refreshedDate
+        
+        var updatedItem = self.collection[i]
+        updatedItem.upkeeps[j].dueDate = refreshedDate
+        
+        FileManagerHelper.shared.saveItem(updatedItem)
     }
     
     func moveUpkeepToBottomOfList(id: UUID) {
