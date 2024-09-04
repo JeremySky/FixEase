@@ -12,6 +12,7 @@ struct MainView: View {
     
     @ObservedObject var viewModel: MainViewModel
     @State var newItemIsPresented: Bool = false
+    @State var nameChangeIsPresented: Bool = false
     @State var deleteAccountAlert: Bool = false
     
     init(viewModel: MainViewModel, newItemIsPresented: Bool = false) {
@@ -24,7 +25,7 @@ struct MainView: View {
             HStack {
                 Spacer()
                 Menu {
-                    Button("Change Name") {}
+                    Button("Change Name") { nameChangeIsPresented = true }
                     Button("Delete Account") { deleteAccountAlert = true }
                 } label: {
                     Image(systemName: "gearshape")
@@ -128,6 +129,9 @@ struct MainView: View {
         }
         .sheet(isPresented: $newItemIsPresented, content: {
             ModifyItemView() { viewModel.addItem($0) }
+        })
+        .sheet(isPresented: $nameChangeIsPresented, content: {
+            NameChangeView(newName: viewModel.user!.name) { viewModel.changeName(to: $0) }
         })
         .alert(
             "Delete Account",

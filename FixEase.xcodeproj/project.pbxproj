@@ -32,6 +32,7 @@
 		62F2E9AC2C7FE27C008153E7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9AB2C7FE27C008153E7 /* User.swift */; };
 		62F2E9AF2C7FE633008153E7 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9AE2C7FE633008153E7 /* UserDefaults.swift */; };
 		62F2E9B12C7FED65008153E7 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9B02C7FED65008153E7 /* FileManager.swift */; };
+		62F2E9B32C88CD24008153E7 /* NameChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2E9B22C88CD24008153E7 /* NameChangeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		62F2E9AB2C7FE27C008153E7 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		62F2E9AE2C7FE633008153E7 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		62F2E9B02C7FED65008153E7 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
+		62F2E9B22C88CD24008153E7 /* NameChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameChangeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 				62813A312C501C6C001C9EF2 /* ModifyUpkeepView.swift */,
 				6238AC2E2C585F8900F75B50 /* ModifyNoteView.swift */,
 				6238AC392C589D3000F75B50 /* UpkeepIndexStepper.swift */,
+				62F2E9B22C88CD24008153E7 /* NameChangeView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				620BB19A2C616FE2003EDC4D /* Date.swift in Sources */,
 				62F2E9A62C6448F2008153E7 /* MainViewModel.swift in Sources */,
 				62813A242C49DA22001C9EF2 /* ItemDetailView.swift in Sources */,
+				62F2E9B32C88CD24008153E7 /* NameChangeView.swift in Sources */,
 				62F2E9AA2C644ECE008153E7 /* TutorialTabView.swift in Sources */,
 				62F2E9AF2C7FE633008153E7 /* UserDefaults.swift in Sources */,
 				62802D3E2C46E4ED00234DE4 /* ContentView.swift in Sources */,

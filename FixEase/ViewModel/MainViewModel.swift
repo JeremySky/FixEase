@@ -23,6 +23,16 @@ class MainViewModel: ObservableObject {
         getCollection()
     }
     
+    func changeName(to newName: String) {
+        if var updatedUser = self.user {
+            updatedUser.name = newName
+            UserDefaultsHelper.shared.saveUser(updatedUser)
+            self.user!.name = newName
+        } else {
+            print("Error user is not logged in")
+        }
+    }
+    
     func deleteAccount() {
         FileManagerHelper.shared.deleteItems()
         UserDefaultsHelper.shared.deleteUser()

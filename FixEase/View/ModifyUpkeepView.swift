@@ -119,7 +119,11 @@ struct ModifyUpkeepView: View {
     }
 }
 
+//#Preview {
+//    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exRocketShip.id)
+//    return ContentView(viewModel: viewModel)
+//}
+
 #Preview {
-    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exRocketShip.id)
-    return ContentView(viewModel: viewModel)
+    ModifyUpkeepView(Upkeep(itemID: UUID()), submit: {_ in})
 }
