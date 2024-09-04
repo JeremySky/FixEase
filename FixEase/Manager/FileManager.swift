@@ -18,6 +18,26 @@ class FileManagerHelper {
         return directory.appendingPathComponent(itemsDirectoryPath)
     }()
     
+    func deleteItems() {
+        do {
+            // Check if the directory exists
+            if fileManager.fileExists(atPath: itemsDirectory.path) {
+                // Get all file URLs in the directory
+                let fileURLs = try fileManager.contentsOfDirectory(at: itemsDirectory, includingPropertiesForKeys: nil)
+                
+                // Iterate through file URLs and delete them
+                for fileURL in fileURLs {
+                    try fileManager.removeItem(at: fileURL)
+                }
+                print("All items successfully deleted.")
+            } else {
+                print("Directory does not exist.")
+            }
+        } catch {
+            print("Failed to delete items: \(error)")
+        }
+    }
+    
     func saveItem(_ item: Item) {
         let fileURL = itemsDirectory.appending(path: item.id.uuidString)
         

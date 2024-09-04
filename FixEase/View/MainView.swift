@@ -12,6 +12,7 @@ struct MainView: View {
     
     @ObservedObject var viewModel: MainViewModel
     @State var newItemIsPresented: Bool = false
+    @State var deleteAccountAlert: Bool = false
     
     init(viewModel: MainViewModel, newItemIsPresented: Bool = false) {
         self.viewModel = viewModel
@@ -22,7 +23,14 @@ struct MainView: View {
         VStack(spacing: 15) {
             HStack {
                 Spacer()
-                Button("New Item") { newItemIsPresented = true }
+                Menu {
+                    Button("Change Name") {}
+                    Button("Delete Account") { deleteAccountAlert = true }
+                } label: {
+                    Image(systemName: "gearshape")
+                        .foregroundStyle(.white)
+                }
+
             }
             .foregroundStyle(.white)
             .padding(.horizontal)
@@ -121,6 +129,16 @@ struct MainView: View {
         .sheet(isPresented: $newItemIsPresented, content: {
             ModifyItemView() { viewModel.addItem($0) }
         })
+        .alert(
+            "Delete Account",
+            isPresented: $deleteAccountAlert,
+            actions: {
+                Button("Delete", role: .destructive, action: { viewModel.deleteAccount() })
+            },
+            message: {
+                Text("This action is irreversible and will permanently remove all your data, settings, and associated content.\nOnce deleted, you will not be able to recover your account.")
+            }
+        )
     }
 }
 

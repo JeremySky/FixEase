@@ -23,6 +23,15 @@ class MainViewModel: ObservableObject {
         getCollection()
     }
     
+    func deleteAccount() {
+        FileManagerHelper.shared.deleteItems()
+        UserDefaultsHelper.shared.deleteUser()
+        self.user = nil
+        self.collection = []
+        self.selectedItemID = nil
+        self.dueNow = []
+    }
+    
     func saveNote(selectedItem item: inout Item, upkeepIndex: Int, note: Note) {
         if let i = item.upkeeps[upkeepIndex].notes.firstIndex(where: { $0.id == note.id }) {
             item.upkeeps[upkeepIndex].notes[i] = note

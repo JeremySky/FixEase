@@ -15,6 +15,11 @@ class UserDefaultsHelper {
     
     let userKey = "User"
     
+    func deleteUser() {
+        defaults.removeObject(forKey: userKey)
+        print("User successfully deleted from UserDefaults.")
+    }
+    
     func saveUser(_ user: User) {
         if let encodedUser = try? JSONEncoder().encode(user) {
             defaults.setValue(encodedUser, forKey: userKey)
