@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class MainViewModel: ObservableObject {
     @Published var user: User?
     @Published var collection: [Item]
@@ -21,6 +22,24 @@ class MainViewModel: ObservableObject {
         
         getUser()
         getCollection()
+    }
+    
+    func deleteUpkeep(deleting upkeep: Upkeep, from item: inout Item) {
+        var updatedItem = item
+        updatedItem.upkeeps = item.upkeeps.filter({ $0.id != upkeep.id })
+        FileManagerHelper.shared.saveItem(updatedItem)
+        item = updatedItem
+        self.dueNow = dueNow.filter({ $0.upkeep.id != upkeep.id })
+    }
+    
+    func deleteItem(_ item: Item) {
+        if let itemIndex = collection.firstIndex(where: { item.id == $0.id }) {
+            FileManagerHelper.shared.deleteItem(item)
+            collection.remove(at: itemIndex)
+            self.dueNow = dueNow.filter({ $0.upkeep.itemID != item.id })
+        } else {
+            print("Item not found in collection")
+        }
     }
     
     func changeName(to newName: String) {

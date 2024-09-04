@@ -13,20 +13,17 @@ struct ModifyUpkeepView: View {
     
     @State var upkeep: Upkeep
     let submit: (Upkeep) -> Void
-    
+    let deleteAction: (() -> Void)?
     var isNew: Bool
     
-    init(_ upkeep: Upkeep, submit: @escaping (Upkeep) -> Void) {
+    @State var deleteAlertPresented = false
+    
+    init(_ upkeep: Upkeep, deleteAction: (() -> Void)? = nil, submit: @escaping (Upkeep) -> Void) {
         self.upkeep = upkeep
         self.submit = submit
+        self.deleteAction = deleteAction
         self.isNew = false
     }
-    
-//    init(newUpkeepFromItem item: Item, submit: @escaping (Upkeep) -> Void) {
-//        self.upkeep = Upkeep(itemID: item.id)
-//        self.submit = submit
-//        self.isNew = true
-//    }
     
     
     var body: some View {
@@ -112,10 +109,43 @@ struct ModifyUpkeepView: View {
                 )
             }
             Spacer()
+            
+            
+            Button(action: {
+                submit(upkeep)
+                dismiss()
+            },
+                   label: {
+                Text("Save")
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity)
+                    .foregroundStyle(.white)
+                    .background(Color.greenDark)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+            })
+            if let deleteAction {
+                Button("Delete") {
+                    deleteAlertPresented = true
+                }
+                .foregroundStyle(Color.greenDark)
+            }
         }
         .padding(.horizontal)
         .background(.gray.opacity(0.1))
         .onAppear{isFocused = isNew}
+        .alert(
+            "Delete \(upkeep.description)?",
+            isPresented: $deleteAlertPresented,
+            actions: {
+                Button("Delete", role: .destructive, action: {
+                    deleteAction!()
+                    dismiss()
+                })
+            },
+            message: {
+                Text("You will not be able to retrieve this data once deleted...")
+            }
+        )
     }
 }
 

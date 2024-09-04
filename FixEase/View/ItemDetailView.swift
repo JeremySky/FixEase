@@ -7,22 +7,6 @@
 
 import SwiftUI
 
-extension Binding where Value == Bool {
-    init(sheet: Binding<Sheet?>) {
-        self.init {
-            switch sheet.wrappedValue?.type {
-            case nil, .modifyNote, .newNote:
-                return false
-            default:
-                return true
-            }
-        } set: { newValue in
-            if !newValue { sheet.wrappedValue = nil }
-        }
-
-    }
-}
-
 enum Sheet: Equatable {
     static func == (lhs: Sheet, rhs: Sheet) -> Bool {
         lhs.type == rhs.type
@@ -63,7 +47,6 @@ enum Sheet: Equatable {
         case modifyItem, newUpkeep, modifyUpkeep, newNote, modifyNote
     }
 }
-
 
 struct ItemDetailView: View {
     
@@ -120,7 +103,7 @@ struct ItemDetailView: View {
                     .background(
                         HStack {
                             RoundedRectangle(cornerRadius: 10)
-                                .foregroundStyle(LinearGradient(colors: [.white, .clear], startPoint: .center, endPoint: .trailing))
+                                .foregroundStyle(.white)
                             Spacer().frame(width: 5)
                         }
                             .shadow(radius: 10, x: -5, y: 5)
@@ -132,7 +115,7 @@ struct ItemDetailView: View {
                 
                 ZStack {
                     if !item.upkeeps.isEmpty {
-                        UpkeepDetailView($item.upkeeps[upkeepIndex], $sheetIsPresenting)
+                        UpkeepDetailView($item.upkeeps[upkeepIndex], $sheetIsPresenting) { viewModel.updateUpkeep(selectedItem: &item, upkeepIndex: upkeepIndex, updatedUpkeep: $0) }
                         UpkeepIndexStepper($upkeepIndex, for: item)
                     } else {
                         EmptyView(newUpkeep: { sheetIsPresenting = .newUpkeep })
@@ -143,70 +126,19 @@ struct ItemDetailView: View {
         .overlay {
             if sheetIsPresenting?.type == .newNote || sheetIsPresenting?.type == .modifyNote {
                 ModifyNoteView(sheetIsPresenting?.value as! Note?, $sheetIsPresenting) { viewModel.saveNote(selectedItem: &self.item, upkeepIndex: self.upkeepIndex, note: $0) }
-//                ModifyNoteView(sheetIsPresenting?.value as! Note?, $sheetIsPresenting) { note in
-//                        if let i = item.upkeeps[upkeepIndex].notes.firstIndex(where: { $0.id == note.id }) {
-//                            item.upkeeps[upkeepIndex].notes[i] = note
-//                        } else {
-//                            item.upkeeps[upkeepIndex].notes.append(note)
-//                        }
-//                        sheetIsPresenting = nil
-//                    }
             }
         }
         .sheet(isPresented: Binding(sheet: $sheetIsPresenting), content: {
             switch sheetIsPresenting {
             case .modifyItem(let item):
-                ModifyItemView(item) { viewModel.updateItem(selectedItem: &self.item, to: $0) }
-//                ModifyItemView(item) { updatedItem in
-//                    self.item = updatedItem
-//                    
-//                    // update viewModel.dueNow's upkeep's emojis...
-//                    viewModel.dueNow = viewModel.dueNow.map({ task in
-//                        if task.upkeep.itemID == updatedItem.id {
-//                            var updatedUpkeep = task.upkeep
-//                            updatedUpkeep.emoji = updatedItem.emoji
-//                            return (upkeep: updatedUpkeep, isCompleted: task.isCompleted)
-//                        } else {
-//                            return task
-//                        }
-//                    })
-//                }
+                ModifyItemView(item, deleteAction: { viewModel.deleteItem(item) }) { viewModel.updateItem(selectedItem: &self.item, to: $0) }
             case .newUpkeep:
                 ModifyUpkeepView(Upkeep(itemID: item.id)) { viewModel.addUpkeep(selectedItem: &self.item, add: $0) }
-//                ModifyUpkeepView(Upkeep(itemID: item.id)) { newUpkeep in
-//                    self.item.upkeeps.append(newUpkeep)
-//                    
-//                    // add newUpkeep to viewModel.dueNow if needed...
-//                    if newUpkeep.dueDate <= Date.endOfDay {
-//                        var upkeepWithEmoji = newUpkeep
-//                        upkeepWithEmoji.emoji = item.emoji
-//                        viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
-//                    }
-//                }
             case .modifyUpkeep(let upkeep):
-                ModifyUpkeepView(upkeep) { viewModel.updateUpkeep(selectedItem: &self.item, upkeepIndex: self.upkeepIndex, updatedUpkeep: $0) }
-//                ModifyUpkeepView(upkeep) { updatedUpkeep in
-//                    self.item.upkeeps[upkeepIndex] = updatedUpkeep
-//                    
-//                    var upkeepWithEmoji = updatedUpkeep
-//                    upkeepWithEmoji.emoji = item.emoji
-//                    
-//                    // edit viewModel.dueNow's matching upkeep...
-//                    if let i = viewModel.dueNow.firstIndex(where: { $0.upkeep.id == upkeepWithEmoji.id }) {
-//                        // replace old upkeep with updatedUpkeep...
-//                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
-//                            viewModel.dueNow[i] = (upkeep: upkeepWithEmoji, isCompleted: false)
-//                        } else {
-//                            // remove upkeep if it is not due anymore...
-//                            viewModel.dueNow.remove(at: i)
-//                        }
-//                    } else {
-//                        // add updatedUpkeep to viewModel.dueNow if needed...
-//                        if upkeepWithEmoji.dueDate <= Date.endOfDay {
-//                            viewModel.dueNow.append((upkeep: upkeepWithEmoji, isCompleted: false))
-//                        }
-//                    }
-//                }
+                ModifyUpkeepView(upkeep, deleteAction: {
+                    self.upkeepIndex -= 1
+                    viewModel.deleteUpkeep(deleting: upkeep, from: &item)
+                }) { viewModel.updateUpkeep(selectedItem: &self.item, upkeepIndex: self.upkeepIndex, updatedUpkeep: $0) }
             default:
                 VStack {
                     Text("Error")
@@ -220,8 +152,10 @@ struct ItemDetailView: View {
 
 
 #Preview {
-    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exShoe.id)
-    return ContentView(viewModel: viewModel)
+    @State var viewModel = MainViewModel(user: User.test, collection: Item.list, selectedItemID: Item.exShoe.id)
+    @State var item = Item.exShoe
+    @State var itemID: UUID? = Item.exShoe.id
+    return ItemDetailView($item, $itemID, viewModel: viewModel)
 }
 
 extension ItemDetailView {

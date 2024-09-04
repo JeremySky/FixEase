@@ -16,12 +16,16 @@ struct ModifyItemView: View {
     
     @State var item: Item
     var isNew: Bool
+    let deleteAction: (() -> Void)?
     let submit: (Item) -> Void
     
-    init(_ item: Item = Item(), submit: @escaping (Item) -> Void) {
+    @State var deleteAlertPresented = false
+    
+    init(_ item: Item = Item(), deleteAction: (() -> Void)? = nil, submit: @escaping (Item) -> Void) {
         self.item = item
         self.isNew = item.isEmpty
         self.submit = submit
+        self.deleteAction = deleteAction
     }
     
     
@@ -107,7 +111,7 @@ struct ModifyItemView: View {
                         Divider()
                             .padding(.horizontal, 8)
                         ScrollView(.horizontal, showsIndicators: false) {
-                            LazyHGrid(rows: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 24) {
+                            LazyHGrid(rows: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                                 ForEach(EmojiSelection.allCases, id: \.self) { emoji in
                                     Button(action: {item.emoji = emoji.rawValue}, label: {
                                         Text(emoji.rawValue)
@@ -118,7 +122,7 @@ struct ModifyItemView: View {
                             }
                             .padding(.horizontal, 12)
                         }
-                        .frame(maxHeight: 300)
+                        .frame(maxHeight: 200)
                     }
                 }
                 .padding(.vertical, 8)
@@ -127,6 +131,26 @@ struct ModifyItemView: View {
                         .foregroundStyle(.white)
                 )
                 Spacer()
+                
+                
+                Button(action: {
+                    submit(item)
+                    dismiss()
+                },
+                       label: {
+                    Text("Save")
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(.white)
+                        .background(Color.greenDark)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                })
+                if let deleteAction {
+                    Button("Delete") {
+                        deleteAlertPresented = true
+                    }
+                    .foregroundStyle(Color.greenDark)
+                }
             }
         }
         .padding(.horizontal)
@@ -134,6 +158,19 @@ struct ModifyItemView: View {
         .onTapGesture {
             focusedField = nil
         }
+        .alert(
+            "Delete \(item.name)?",
+            isPresented: $deleteAlertPresented,
+            actions: {
+                Button("Delete", role: .destructive, action: {
+                    deleteAction!()
+                    dismiss()
+                })
+            },
+            message: {
+                Text("You will not be able to retrieve this data once deleted...")
+            }
+        )
     }
 }
 
@@ -141,6 +178,6 @@ struct ModifyItemView: View {
     @State var isPresenting: Bool = true
     return Text("ASDF")
         .sheet(isPresented: $isPresenting, content: {
-            ModifyItemView(Item()) { _ in }
+            ModifyItemView(Item.exCoffeeMaker, deleteAction: {}) { _ in }
         })
 }

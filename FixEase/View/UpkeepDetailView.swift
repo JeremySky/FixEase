@@ -11,10 +11,13 @@ struct UpkeepDetailView: View {
     
     @Binding var upkeep: Upkeep
     @Binding var sheetIsPresenting: Sheet?
+    let saveUpkeepAction: (Upkeep) -> Void
     
-    init(_ upkeep: Binding<Upkeep>, _ sheetIsPresenting: Binding<Sheet?>) {
+    
+    init(_ upkeep: Binding<Upkeep>, _ sheetIsPresenting: Binding<Sheet?>, saveUpkeepAction: @escaping (Upkeep) -> Void) {
         self._upkeep = upkeep
         self._sheetIsPresenting = sheetIsPresenting
+        self.saveUpkeepAction = saveUpkeepAction
     }
     
     var body: some View {
@@ -44,6 +47,12 @@ struct UpkeepDetailView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         })
                     }
+                    .onDelete(perform: { indexSet in
+                        var updatedUpkeep = self.upkeep
+                        updatedUpkeep.notes.remove(atOffsets: indexSet)
+                        self.upkeep = updatedUpkeep
+                        saveUpkeepAction(updatedUpkeep)
+                    })
                     Button(action: { sheetIsPresenting = .newNote }, label: {
                         Text("+ New Note")
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -59,6 +68,6 @@ struct UpkeepDetailView: View {
 }
 
 #Preview {
-    @State var viewModel = MainViewModel(collection: Item.list, selectedItemID: Item.exRocketShip.id)
-    return ContentView(viewModel: viewModel)
+    @State var upkeep = Upkeep.listCoffeeMaker[0]
+    return UpkeepDetailView($upkeep, .constant(nil)) { _ in }
 }
