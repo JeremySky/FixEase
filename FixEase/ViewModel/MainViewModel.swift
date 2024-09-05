@@ -20,26 +20,38 @@ class MainViewModel: ObservableObject {
         self.selectedItemID = selectedItemID
         self.dueNow = dueNow
         
+        NotificationManager.shared.requestAuth()
         getUser()
         getCollection()
     }
     
     func deleteUpkeep(deleting upkeep: Upkeep, from item: inout Item) {
+        
         var updatedItem = item
         updatedItem.upkeeps = item.upkeeps.filter({ $0.id != upkeep.id })
-        FileManagerHelper.shared.saveItem(updatedItem)
+        
         item = updatedItem
+        
+        FileManagerHelper.shared.saveItem(updatedItem)
+        NotificationManager.shared.cancelUpkeepNotification(upkeep)
+        
         self.dueNow = dueNow.filter({ $0.upkeep.id != upkeep.id })
     }
     
     func deleteItem(_ item: Item) {
-        if let itemIndex = collection.firstIndex(where: { item.id == $0.id }) {
+        
+        if let itemIndex = self.collection.firstIndex(where: { item.id == $0.id }) {
+            
             FileManagerHelper.shared.deleteItem(item)
-            collection.remove(at: itemIndex)
+            NotificationManager.shared.cancelItemNotifications(item)
+            
+            self.collection.remove(at: itemIndex)
             self.dueNow = dueNow.filter({ $0.upkeep.itemID != item.id })
+            
         } else {
             print("Item not found in collection")
         }
+        
     }
     
     func changeName(to newName: String) {
@@ -53,8 +65,11 @@ class MainViewModel: ObservableObject {
     }
     
     func deleteAccount() {
+        
         FileManagerHelper.shared.deleteItems()
         UserDefaultsHelper.shared.deleteUser()
+        NotificationManager.shared.deleteAllNotifications()
+        
         self.user = nil
         self.collection = []
         self.selectedItemID = nil
@@ -62,6 +77,7 @@ class MainViewModel: ObservableObject {
     }
     
     func saveNote(selectedItem item: inout Item, upkeepIndex: Int, note: Note) {
+        
         if let i = item.upkeeps[upkeepIndex].notes.firstIndex(where: { $0.id == note.id }) {
             item.upkeeps[upkeepIndex].notes[i] = note
         } else {
@@ -93,9 +109,9 @@ class MainViewModel: ObservableObject {
             }
         }
         
-        
-        
         FileManagerHelper.shared.saveItem(item)
+        NotificationManager.shared.cancelUpkeepNotification(updatedUpkeep)
+        NotificationManager.shared.scheduleNotification(for: updatedUpkeep)
     }
     
     func addUpkeep(selectedItem item: inout Item, add newUpkeep: Upkeep) {
@@ -109,6 +125,7 @@ class MainViewModel: ObservableObject {
         }
         
         FileManagerHelper.shared.saveItem(item)
+        NotificationManager.shared.scheduleNotification(for: newUpkeep)
     }
     
     func updateItem(selectedItem item: inout Item, to updatedItem: Item) {
@@ -176,6 +193,9 @@ class MainViewModel: ObservableObject {
         updatedItem.upkeeps[j].dueDate = refreshedDate
         
         FileManagerHelper.shared.saveItem(updatedItem)
+        
+        let updatedUpkeep = updatedItem.upkeeps[j]
+        NotificationManager.shared.scheduleNotification(for: updatedUpkeep)
     }
     
     func moveUpkeepToBottomOfList(id: UUID) {
@@ -188,6 +208,7 @@ class MainViewModel: ObservableObject {
     }
     
     func getUpkeepsDueNow() {
+        
         func setEmoji(from item: Item, to upkeep: Upkeep) -> Upkeep {
             var updatedUpkeep = upkeep
             updatedUpkeep.emoji = item.emoji
@@ -204,6 +225,7 @@ class MainViewModel: ObservableObject {
         }
     
         self.dueNow = list.sorted(by: { $0.emoji! < $1.emoji! }).map({(upkeep: $0, isCompleted: false)})
+        
     }
     
     func getItemIndex() -> Int? {

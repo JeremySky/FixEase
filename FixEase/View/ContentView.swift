@@ -29,6 +29,7 @@ struct ContentView: View {
         .background(getBackground())
         .onAppear {
             viewModel.getUpkeepsDueNow()
+            NotificationManager.shared.removeDeliveredNotifications()
         }
         .fullScreenCover(isPresented: $showTutorial, content: {
             TutorialTabView() {
