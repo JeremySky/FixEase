@@ -15,6 +15,7 @@ struct MainView: View {
     @State var nameChangeIsPresented: Bool = false
     @State var deleteAccountAlert: Bool = false
     
+    
     init(viewModel: MainViewModel, newItemIsPresented: Bool = false) {
         self.viewModel = viewModel
         self.newItemIsPresented = newItemIsPresented
@@ -31,7 +32,7 @@ struct MainView: View {
                     Image(systemName: "gearshape")
                         .foregroundStyle(.white)
                 }
-
+                
             }
             .foregroundStyle(.white)
             .padding(.horizontal)
@@ -147,5 +148,23 @@ struct MainView: View {
 }
 
 #Preview {
-    ContentView(viewModel: MainViewModel(user: User.test, collection: []))
+    @State var viewModel = MainViewModel(user: User.test, collection: [], selectedItemID: nil, dueNow: [])
+    let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+    return MainView(viewModel: viewModel)
+        .background(
+            GeometryReader { geometry in
+                VStack {
+                    ZStack {
+                        Ellipse()
+                            .frame(width: 1550, height: 350)
+                            .foregroundStyle(Gradient(colors: [Color.greenLight, Color.greenDark]))
+                            .rotationEffect(isIpad ? .degrees(0) : .degrees(-7))
+                    }
+                    Spacer()
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .offset(y: isIpad ? -geometry.size.height/10 : -geometry.size.height/6.3)
+            }
+                .ignoresSafeArea(.keyboard)
+        )
 }

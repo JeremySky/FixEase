@@ -15,6 +15,8 @@ struct TutorialTabView: View {
     @State var isCompleted: Bool = false
     @State var showEndTutorial: Bool = false
     
+    let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+    
     var body: some View {
         ZStack {
             Color.greenDark.ignoresSafeArea()
@@ -22,7 +24,7 @@ struct TutorialTabView: View {
                 Button("Skip") { action() }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.trailing)
+                    .padding(isIpad ? .all : .trailing)
                 Spacer()
                 TabView {
                     // Add Item to Collection...
@@ -46,8 +48,8 @@ struct TutorialTabView: View {
                                 }
                             }
                             .foregroundStyle(.white)
-                            Spacer()
                         }
+                        .frame(maxWidth: 400, alignment: isIpad ? .center : .leading)
                         .padding()
                         
                     }
@@ -74,8 +76,8 @@ struct TutorialTabView: View {
                                     }
                                 }
                                 .foregroundStyle(.white)
-                                Spacer()
                             }
+                            .frame(maxWidth: 400, alignment: isIpad ? .center : .leading)
                             .padding()
                         }
                     }
@@ -121,6 +123,7 @@ struct TutorialTabView: View {
                 .tabViewStyle(.page)
             }
         }
+        .statusBar(hidden: true)
     }
 }
 

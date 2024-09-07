@@ -14,6 +14,7 @@ struct UpkeepRow: View {
     let action: () -> Void
     @State var animationAmount: CGFloat
     let startWithAnimation: Bool
+    let isIpad = UIDevice.current.userInterfaceIdiom == .pad
     
     init(_ upkeep: Upkeep, isCompleted: Binding<Bool>, startWithAnimation: Bool = false, action: @escaping () -> Void) {
         self.upkeep = upkeep
@@ -82,7 +83,7 @@ struct UpkeepRow: View {
             }
             .padding()
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: 400)
         .frame(height: 115)
         .onAppear() {
             if startWithAnimation {

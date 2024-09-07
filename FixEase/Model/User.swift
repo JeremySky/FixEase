@@ -17,8 +17,6 @@ struct User: Codable {
     }
 }
 
-#if DEBUG
 extension User {
     static var test = User(name: "John Doe")
 }
-#endif

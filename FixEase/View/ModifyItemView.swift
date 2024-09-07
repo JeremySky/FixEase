@@ -20,6 +20,7 @@ struct ModifyItemView: View {
     let submit: (Item) -> Void
     
     @State var deleteAlertPresented = false
+    let isIpad = UIDevice.current.userInterfaceIdiom == .pad
     
     init(_ item: Item = Item(), deleteAction: (() -> Void)? = nil, submit: @escaping (Item) -> Void) {
         self.item = item
@@ -132,25 +133,28 @@ struct ModifyItemView: View {
                 )
                 Spacer()
                 
-                
-                Button(action: {
-                    submit(item)
-                    dismiss()
-                },
-                       label: {
-                    Text("Save")
-                        .padding(.vertical, 8)
-                        .frame(maxWidth: .infinity)
-                        .foregroundStyle(.white)
-                        .background(Color.greenDark)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                })
-                if let deleteAction {
-                    Button("Delete") {
-                        deleteAlertPresented = true
+                VStack {
+                    Button(action: {
+                        submit(item)
+                        dismiss()
+                    },
+                           label: {
+                        Text("Save")
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .foregroundStyle(.white)
+                            .background(Color.greenDark)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                    })
+                    if deleteAction != nil {
+                        Button("Delete") {
+                            deleteAlertPresented = true
+                        }
+                        .foregroundStyle(Color.greenDark)
+                        .padding(isIpad ? .top : [])
                     }
-                    .foregroundStyle(Color.greenDark)
                 }
+                .padding(.bottom)
             }
         }
         .padding(.horizontal)

@@ -15,6 +15,7 @@ struct ModifyUpkeepView: View {
     let submit: (Upkeep) -> Void
     let deleteAction: (() -> Void)?
     var isNew: Bool
+    let isIpad = UIDevice.current.userInterfaceIdiom == .pad
     
     @State var deleteAlertPresented = false
     
@@ -110,25 +111,28 @@ struct ModifyUpkeepView: View {
             }
             Spacer()
             
-            
-            Button(action: {
-                submit(upkeep)
-                dismiss()
-            },
-                   label: {
-                Text("Save")
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(.white)
-                    .background(Color.greenDark)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-            })
-            if let deleteAction {
-                Button("Delete") {
-                    deleteAlertPresented = true
+            VStack {
+                Button(action: {
+                    submit(upkeep)
+                    dismiss()
+                },
+                       label: {
+                    Text("Save")
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(.white)
+                        .background(Color.greenDark)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                })
+                if deleteAction != nil {
+                    Button("Delete") {
+                        deleteAlertPresented = true
+                    }
+                    .foregroundStyle(Color.greenDark)
+                    .padding(isIpad ? .top : [])
                 }
-                .foregroundStyle(Color.greenDark)
             }
+            .padding(.bottom)
         }
         .padding(.horizontal)
         .background(.gray.opacity(0.1))

@@ -100,6 +100,7 @@ struct ItemDetailView: View {
                     }
                     .padding(.top, 2)
                     .padding(.bottom, 4)
+                    .padding(.horizontal)
                     .background(
                         HStack {
                             RoundedRectangle(cornerRadius: 10)
@@ -110,6 +111,7 @@ struct ItemDetailView: View {
                     )
                 }
                 .padding()
+                .frame(maxWidth: 400)
                 
                 Spacer().frame(height: 60)
                 
